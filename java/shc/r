@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+IFS=$'\n\t'
+
+touch _.class
+rm *.class
+javac -d bin src/*.java
+java -cp bin shc
