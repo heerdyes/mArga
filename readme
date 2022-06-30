@@ -4,11 +4,19 @@ upon any language, create
   - file explorer (fx[c|g|e][0-9][0-9])
   - program launcher (pl[c|g|e][0-9][0-9])
   - network explorer (nx[c|g|e][0-9][0-9])
+  - virtual machine (vm[c|g|e][0-9][0-9])
 
 aspects
   - console (basic)
   - graphic (advanced)
   - embedded (advanced / custom-iodev)
+  
+incarnations
+  - concept of versions does not resonate
+  - i like to sketch software
+  - tried [0-90-9] but it is sequential: seems to imply some continuation
+  - 3 letter subdirectories (regex [a-za-za-z]) seems apt for now
+  - though i'd prefer non-sequential symbols, devanagari, or greek perhaps
 
 eventually the shell becomes a language interface to "custom programs" such as
 the editor, file explorer, and so on.
