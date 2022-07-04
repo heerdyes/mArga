@@ -1,10 +1,11 @@
 upon any language, create
-  - shell (sh[c|g|e][0-9][0-9])
-  - editor (ed[c|g|e][0-9][0-9])
-  - file explorer (fx[c|g|e][0-9][0-9])
-  - program launcher (pl[c|g|e][0-9][0-9])
-  - network explorer (nx[c|g|e][0-9][0-9])
-  - virtual machine (vm[c|g|e][0-9][0-9])
+  - turtle (tu[c|g|e])
+  - shell (sh[c|g|e])
+  - editor (ed[c|g|e])
+  - file explorer (fx[c|g|e])
+  - program launcher (pl[c|g|e])
+  - network explorer (nx[c|g|e])
+  - virtual machine (vm[c|g|e])
     - eventually implement mArga on this! (fractal automata manifest!)
 
 aspects
@@ -15,7 +16,6 @@ aspects
 incarnations
   - concept of versions does not resonate
   - i like to sketch software
-  - tried [0-90-9] but it is sequential: seems to imply some continuation
   - 2 letter subdirectories (regex [a-za-z]) using Harvard-Kyoto ASCII scheme
   - these could represent almost all consonants and vowels of the devanagari script
   - but it presumes case sensitivity; which is probably a good thing
