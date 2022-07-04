@@ -59,6 +59,11 @@ public class shc {
 				cd=String.format("%s%s%s", cd, File.separator, arg0);
 			}
 		}
+		else if (cmd.equals("help")) {
+			c.printf("[Guide Mark II Help System]\n");
+			c.printf("possible commands:\n");
+			c.printf("  ls\n  cd\n  cat\n  touch\n  quit\n  pwd\n");
+		}
 	}
 
 	static boolean sayonara(String cli) {
