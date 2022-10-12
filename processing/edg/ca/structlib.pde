@@ -91,7 +91,6 @@ class CharList {
         cur.next.prev=delch.prev;
         cur=delch.next;
       }
-      println("-> del ["+delch.c+"]");
       nchars-=1;
     }
   }
@@ -117,7 +116,6 @@ class CharList {
         line(xl, yoff, xr, yoff);
       }
     }
-    print();
   }
 }
 
@@ -135,7 +133,6 @@ class CharNode {
     if (c!='\0') {
       fill(grn);
       noStroke();
-      print(""+c);
       text(""+c, x, y);
     }
   }
