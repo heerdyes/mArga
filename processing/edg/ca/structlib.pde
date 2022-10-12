@@ -8,7 +8,7 @@ class CharList {
   }
 
   boolean printable(int code) {
-    boolean alpha=code>=65 && code<90;
+    boolean alpha=code>=65 && code<=90;
     boolean num=code>=48 && code<=57;
     boolean minus_equals_backslash=code==45 || code==61 || code==92;
     boolean square_brackets=code==91 || code==93;
@@ -39,12 +39,12 @@ class CharList {
   }
 
   void insch(char ch) {
-    CharNode nch=new CharNode(ch);
-    if (cur.prev==null) {
-      nch.next=cur;
-      cur.prev=nch;
-      head=nch;
+    if (cur==head) {
+      head=new CharNode(ch);
+      head.next=cur;
+      cur.prev=head;
     } else {
+      CharNode nch=new CharNode(ch);
       CharNode prevbak=cur.prev;
       prevbak.next=nch;
       nch.prev=prevbak;
@@ -83,7 +83,7 @@ class CharList {
   void del() {
     if (cur.c!='\0') {
       CharNode delch=cur;
-      if (cur.prev==null) {
+      if (cur==head) {
         cur=delch.next;
         head=cur;
       } else {
@@ -91,7 +91,7 @@ class CharList {
         cur.next.prev=delch.prev;
         cur=delch.next;
       }
-      delch=null;
+      println("-> del ["+delch.c+"]");
       nchars-=1;
     }
   }
@@ -117,6 +117,7 @@ class CharList {
         line(xl, yoff, xr, yoff);
       }
     }
+    print();
   }
 }
 
@@ -134,6 +135,7 @@ class CharNode {
     if (c!='\0') {
       fill(grn);
       noStroke();
+      print(""+c);
       text(""+c, x, y);
     }
   }
