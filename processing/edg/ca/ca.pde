@@ -1,7 +1,8 @@
 PFont ocrbw;
-CharList cl;
+LineList ll;
 color grn=color(0, 255, 0);
 float txtsz=24;
+float k=0.75;
 
 void setup() {
   size(1280, 720);
@@ -10,14 +11,15 @@ void setup() {
   textSize(txtsz);
   ocrbw=createFont("bitwise-font/Bitwise-m19x.ttf", txtsz);
   textFont(ocrbw);
-  cl=new CharList();
+  ll=new LineList();
+  ll.rndr(40, 40, txtsz);
 }
 
 void draw() {
 }
 
 void keyPressed() {
-  cl.xkey(key, keyCode);
+  ll.xkey(key, keyCode);
   background(0);
-  cl.rndr(40, 40, 0.75*txtsz);
+  ll.rndr(40, 40, txtsz);
 }
