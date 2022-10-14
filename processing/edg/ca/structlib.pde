@@ -1,9 +1,59 @@
+class LineList {
+  LineNode head, tail, cur;
+  int nlines;
+
+  LineList() {
+    head=tail=cur=new LineNode(new CharList());
+    nlines=0;
+  }
+
+  void rndr(float x, float y, float offset) {
+    int j=0;
+    for (LineNode i=head; i!=null; i=i.next, j++) {
+      i.rndr(x, y+offset*j);
+    }
+  }
+
+  void xkey(char ch, int code) {
+    if (code==10) {
+      println("[TODO] handle enter!");
+    } else {
+      cur.s.xkey(ch, code);
+    }
+  }
+
+  void insln() {
+    if (cur==head) {
+      head=new LineNode(new CharList());
+      head.next=cur;
+      cur.prev=head;
+    } else {
+      //
+    }
+  }
+}
+
+class LineNode {
+  CharList s;
+  LineNode prev, next;
+
+  LineNode(CharList ln) {
+    s=ln;
+    prev=null;
+    next=null;
+  }
+
+  void rndr(float x, float y) {
+    s.rndr(x, y, k*txtsz);
+  }
+}
+
 class CharList {
   CharNode head, tail, cur;
   int nchars;
 
   CharList() {
-    cur=head=tail=new CharNode('\0');
+    cur=head=tail=null;
     nchars=0;
   }
 
@@ -30,7 +80,7 @@ class CharList {
     } else if (code==36) { // home
       cur=head;
     } else if (code==35) { // end
-      cur=tail;
+      cur=null;
     } else if (code==8) { // backspace
       bksp();
     } else if (code==127) { // delete
@@ -39,14 +89,22 @@ class CharList {
   }
 
   void insch(char ch) {
-    if (cur==head) {
-      head=new CharNode(ch);
-      head.next=cur;
-      cur.prev=head;
+    if (nchars==0) {
+      head=tail=new CharNode(ch);
+    } else if (cur==null) {
+      cur=new CharNode(ch);
+      tail.next=cur;
+      cur.prev=tail;
+      tail=cur;
+      cur=null;
     } else {
       CharNode nch=new CharNode(ch);
       CharNode prevbak=cur.prev;
-      prevbak.next=nch;
+      if (prevbak!=null) {
+        prevbak.next=nch;
+      } else {
+        head=nch;
+      }
       nch.prev=prevbak;
       nch.next=cur;
       cur.prev=nch;
@@ -55,41 +113,53 @@ class CharList {
   }
 
   void curshr() {
-    if (cur.next!=null) {
+    if (cur!=null) {
       cur=cur.next;
     }
   }
 
   void curshl() {
-    if (cur.prev!=null) {
+    if (cur!=null) {
       cur=cur.prev;
+    } else {
+      cur=tail;
     }
   }
 
   void bksp() {
-    if (cur.prev!=null) {
-      CharNode delch=cur.prev;
-      cur.prev=delch.prev;
-      if (delch.prev!=null) {
-        delch.prev.next=cur;
-      } else {
-        head=cur;
+    if (nchars>0) {
+      if (cur==null && head==tail) {
+        head=tail=null;
+      } else if (cur==null && head!=tail) {
+        tail=tail.prev;
+        tail.next=null;
+      } else if (cur!=head) {
+        CharNode delch=cur.prev;
+        cur.prev=delch.prev;
+        if (delch.prev!=null) {
+          delch.prev.next=cur;
+        } else {
+          head=cur;
+        }
       }
-      delch=null;
       nchars-=1;
     }
   }
 
   void del() {
-    if (cur.c!='\0') {
+    if (cur!=null) {
       CharNode delch=cur;
       if (cur==head) {
         cur=delch.next;
         head=cur;
+      } else if (cur==tail) {
+        tail=tail.prev;
+        tail.next=cur=null;
       } else {
         cur.prev.next=delch.next;
         cur.next.prev=delch.prev;
         cur=delch.next;
+        delch=null;
       }
       nchars-=1;
     }
@@ -97,24 +167,26 @@ class CharList {
 
   String gets() {
     StringBuffer tmp=new StringBuffer();
-    for (CharNode i=head; i.c!='\0'; i=i.next) {
+    for (CharNode i=head; i!=null; i=i.next) {
       tmp.append(i.c);
     }
     return tmp.toString();
   }
 
   void rndr(float x, float y, float sz) {
-    int j=0;
-    for (CharNode i=head; i!=null; i=i.next, j++) {
-      float offset=x+sz*j;
+    float offset=x;
+    float yoff=y+txtsz/2+2;
+    for (CharNode i=head; i!=null; i=i.next) {
       i.rndr(offset, y);
       if (i==cur) {
-        float yoff=y+txtsz/2+2;
-        float xl=offset-txtsz/4;
-        float xr=offset+txtsz/4-1;
         stroke(grn);
-        line(xl, yoff, xr, yoff);
+        line(offset-txtsz/4, yoff, offset+txtsz/4-1, yoff);
       }
+      offset+=sz;
+    }
+    if (cur==null) {
+      stroke(grn);
+      line(offset-txtsz/4, yoff, offset+txtsz/4-1, yoff);
     }
   }
 }
@@ -130,10 +202,8 @@ class CharNode {
   }
 
   void rndr(float x, float y) {
-    if (c!='\0') {
-      fill(grn);
-      noStroke();
-      text(""+c, x, y);
-    }
+    fill(grn);
+    noStroke();
+    text(""+c, x, y);
   }
 }
