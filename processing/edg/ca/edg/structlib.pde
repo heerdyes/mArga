@@ -3,32 +3,64 @@ class LineList {
   int nlines;
 
   LineList() {
-    head=tail=cur=new LineNode(new CharList());
+    head=tail=cur=null;
     nlines=0;
   }
 
   void rndr(float x, float y, float offset) {
     int j=0;
     for (LineNode i=head; i!=null; i=i.next, j++) {
-      i.rndr(x, y+offset*j);
+      float yoff=y+offset*j;
+      i.rndr(x, yoff);
+      if (i==cur) {
+        stroke(grn);
+        line(x, yoff-20, width-1, yoff-20);
+      }
+    }
+    if (cur==null) {
+      stroke(grn);
+      line(x, y+offset*j, width-1, y+offset*j);
     }
   }
 
   void xkey(char ch, int code) {
-    if (code==10) {
-      println("[TODO] handle enter!");
+    if (code==10) { // key enter
+      insln();
+    } else if (code==38) {
+      curshu();
+    } else if (code==40) {
+      curshd();
+    } else if (nlines==0) {
+      head=tail=new LineNode(new CharList(ch));
+      nlines=1;
+      cur=null;
+    } else if (cur==null) {
+      tail.s.xkey(ch, code);
     } else {
-      cur.s.xkey(ch, code);
+      cur.prev.s.xkey(ch, code);
+    }
+  }
+
+  void curshu() {
+    if (cur==null) {
+      cur=tail;
+    } else if (cur!=head) {
+      cur=cur.prev;
+    }
+  }
+
+  void curshd() {
+    if (cur!=null) {
+      cur=cur.next;
     }
   }
 
   void insln() {
-    if (cur==head) {
-      head=new LineNode(new CharList());
-      head.next=cur;
-      cur.prev=head;
+    if (cur==null) {
+      tail.next=new LineNode(new CharList());
+      tail=tail.next;
     } else {
-      //
+      println("[TODO] insln: curln");
     }
   }
 }
@@ -55,6 +87,13 @@ class CharList {
   CharList() {
     cur=head=tail=null;
     nchars=0;
+  }
+
+  CharList(char c) {
+    // verify cn is not already a chain
+    head=tail=new CharNode(c);
+    cur=null;
+    nchars=1;
   }
 
   boolean printable(int code) {

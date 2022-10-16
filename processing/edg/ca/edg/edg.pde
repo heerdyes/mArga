@@ -3,6 +3,7 @@ LineList ll;
 color grn=color(0, 255, 0);
 float txtsz=24;
 float k=0.75;
+float lngap=1.5;
 
 void setup() {
   size(1280, 720);
@@ -12,7 +13,7 @@ void setup() {
   ocrbw=createFont("bitwise-font/Bitwise-m19x.ttf", txtsz);
   textFont(ocrbw);
   ll=new LineList();
-  ll.rndr(40, 40, txtsz);
+  ll.rndr(40, 40, lngap*txtsz);
 }
 
 void draw() {
@@ -21,5 +22,5 @@ void draw() {
 void keyPressed() {
   ll.xkey(key, keyCode);
   background(0);
-  ll.rndr(40, 40, txtsz);
+  ll.rndr(40, 40, lngap*txtsz);
 }
