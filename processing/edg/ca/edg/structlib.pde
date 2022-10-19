@@ -37,10 +37,15 @@ class LineList {
     }
   }
 
-  void savefile() {
+  void clr() {
+    head=tail=cur=null;
+    nlines=0;
+  }
+
+  void savefile(String fn) {
     if (nlines>0) {
-      println("saving file...");
-      pw=createWriter(tmpfn);
+      println("saving file: "+fn);
+      pw=createWriter(fn);
       for (LineNode i=head; i!=null; i=i.next) {
         pw.println(i.s.gets());
       }
@@ -61,8 +66,6 @@ class LineList {
       curshu();
     } else if (code==40) {
       curshd();
-    } else if (code==113) { // <F2>
-      savefile();
     } else {
       cur.s.xkey(ch, code);
     }
@@ -132,7 +135,6 @@ class CharList {
   }
 
   void xkey(char ch, int code) {
-    println("["+code+"]");
     if (printable(code)) {
       insch(ch);
     } else if (code==37) { // left arrow
@@ -148,6 +150,11 @@ class CharList {
     } else if (code==127) { // delete
       del();
     }
+  }
+
+  void clr() {
+    cur=head=tail=null;
+    nchars=0;
   }
 
   void insch(char ch) {
@@ -226,6 +233,12 @@ class CharList {
         delch=null;
       }
       nchars-=1;
+    }
+  }
+
+  void puts(String s) {
+    for (int i=0; i<s.length(); i++) {
+      insch(s.charAt(i));
     }
   }
 
