@@ -1,22 +1,36 @@
 upon any language, create
-  - turtle (tu[c|g|e])
-  - shell (sh[c|g|e])
-  - editor (ed[c|g|e])
-  - file explorer (fx[c|g|e])
-  - program launcher (pl[c|g|e])
-  - network explorer (nx[c|g|e])
-  - virtual machine (vm[c|g|e])
+  - turtle (tu[c|g|e|l])
+  - shell (sh[c|g|e|l])
+  - editor (ed[c|g|e|l])
+  - file explorer (fx[c|g|e|l])
+  - network explorer (nx[c|g|e|l])
+  - terminal emulator (te[c|g|e|l])
+  - web browser (wb[c|g|e|l])
+  - web server (ws[c|g|e|l])
+  - window manager (wm[c|g|e|l])
+  - virtual machine (vm[c|g|e|l])
     - eventually implement mArga on this! (fractal automata manifest!)
+  - operating system (os[c|g|e|l])
+    - megaproject!
+    - possibly use vm[c|g|e|l] as target
+  - media player (mp[c|g|e|l])
+  - flow based programming environment (fb[c|g|e|l])
 
 aspects
   - console (basic)
+    - terminal based wizard (prompt) style
   - graphic (advanced)
+    - event based gui to express program intent
   - embedded (advanced / custom-iodev)
-  
+    - h/w + s/w to build a system that expresses the program intent
+  - language (advanced)
+    - invent a language (dsl?) that expresses the program intent
+    - or a configuration dsl that generalizes program intent
+
 incarnations
   - concept of versions does not resonate
   - i like to sketch software
-  - 2 letter subdirectories (regex [a-za-z]) using Harvard-Kyoto ASCII scheme
+  - single vowel phonemes, regex: [a-zA-Z][a-zA-Z]([a-zA-Z]), using Harvard-Kyoto ASCII scheme
   - these could represent almost all consonants and vowels of the devanagari script
   - but it presumes case sensitivity; which is probably a good thing
   - but that makes one think of windows systems!
