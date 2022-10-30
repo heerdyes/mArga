@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+rm bin/*.class
+javac -d bin src/*.java
+java -cp bin edg
