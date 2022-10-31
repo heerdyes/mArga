@@ -1,0 +1,10 @@
+# json posting
+curl --header "Content-Type: application/json" \
+  --request POST \
+  --data '{"attr1":"xyz","attr2":"abc"}' \
+  http://localhost:3000/
+
+# form posting
+curl -X POST http://localhost:3000/ \
+   -H "Content-Type: application/x-www-form-urlencoded" \
+   -d "param1=value1&param2=value2"
