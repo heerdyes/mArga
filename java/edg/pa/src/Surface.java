@@ -33,7 +33,8 @@ class Surface extends JPanel implements KeyListener, MouseListener {
     g2d.setFont(fnt);
     int i = 0;
     for (StringBuffer sb : ed.buf) {
-      g2d.drawString(sb.toString(), 50, 50 + i * 16);
+      g2d.drawString(String.format("%03d",i), 10, 20+i*16);
+      g2d.drawString(sb.toString(), 50, 20+i*16);
       i += 1;
     }
   }
