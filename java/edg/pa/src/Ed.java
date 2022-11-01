@@ -27,6 +27,13 @@ class Ed {
     cc=0;
   }
 
+  void bksp() {
+    if(cc>0) {
+      StringBuffer tmp=buf.get(cr);
+      tmp.deleteCharAt(--cc);
+    }
+  }
+
   void insch(char c) {
     StringBuffer row = buf.get(cr);
     row.insert(cc, c);
@@ -45,6 +52,8 @@ class Ed {
       insch(c);
     } else if(kc==10) {
       appendln();
+    } else if(kc==8) {
+      bksp();
     } else {
       System.out.println("[sendkey] nonprintable char!");
     }
