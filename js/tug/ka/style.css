@@ -1,0 +1,15 @@
+input[type="text"] {
+  padding: 4px 10px;
+  height: 20px;
+  border: 1px solid black;
+  margin: 0px;
+  border-radius: 3px;
+  width: 100%;
+}
+textarea {
+  padding: 4px 10px;
+  border: 1px solid gray;
+  margin: 0px;
+  border-radius: 3px;
+  width: 100%;
+}
