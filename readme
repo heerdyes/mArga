@@ -15,6 +15,7 @@ upon any language, create
     - possibly use vm[c|g|e|l] as target
   - media player (mp[c|g|e|l])
   - flow based programming environment (fb[c|g|e|l])
+  - file system (fs[c|g|e|l])
 
 aspects
   - console (basic)
@@ -28,15 +29,14 @@ aspects
     - or a configuration dsl that generalizes program intent
 
 incarnations
-  - concept of versions does not resonate
-  - i like to sketch software
-  - single vowel phonemes, regex: [a-zA-Z][a-zA-Z]([a-zA-Z]), using Harvard-Kyoto ASCII scheme
+  - concept of incremental versions does not resonate
+  - i like to sketch software (the elusive philosophy of "feel")
+  - single vowel phonemes using Harvard-Kyoto ASCII scheme
   - these could represent almost all consonants and vowels of the devanagari script
-  - but it presumes case sensitivity; which is probably a good thing
-  - but that makes one think of windows systems!
+  - but it presumes case sensitivity; which is a good thing
+  - but that makes one think of windows systems! we can afford to risk this.
 
 eventually the shell becomes a language interface to "custom programs" such as
 the editor, file explorer, and so on.
-the shell evolves into a full-fledged language,
-and the fractal recursion continues ad infinitum
-
+from the virtual machine(s) emerge compiler/interpreter toolchain ecosystems.
+eventually the fractal recursion continues ad infinitum.
