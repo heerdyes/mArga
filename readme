@@ -16,6 +16,7 @@ upon any language, create
   - media player (mp[c|g|e|l])
   - flow based programming environment (fb[c|g|e|l])
   - file system (fs[c|g|e|l])
+  - database (db[c|g|e|l])
 
 aspects
   - console (basic)
@@ -31,7 +32,7 @@ aspects
 incarnations
   - concept of incremental versions does not resonate
   - i like to sketch software (the elusive philosophy of "feel")
-  - single vowel phonemes using Harvard-Kyoto ASCII scheme
+  - phonemes using Harvard-Kyoto ASCII scheme
   - these could represent almost all consonants and vowels of the devanagari script
   - but it presumes case sensitivity; which is a good thing
   - but that makes one think of windows systems! we can afford to risk this.
