@@ -3,7 +3,7 @@ package com.fractalautomatawaveband.marga.edc.ka;
 import java.io.IOException;
 
 public class U {
-	public static String rdln() throws IOException {
+	static String rdln() throws IOException {
 		StringBuffer sb = new StringBuffer();
 		for (;;) {
 			int d = System.in.read();
@@ -18,12 +18,12 @@ public class U {
 		return sb.toString();
 	}
 
-	public static String rdln(String prompt) throws IOException {
+	static String rdln(String prompt) throws IOException {
 		System.out.print(prompt);
 		return rdln();
 	}
 
-	public static void inspect(String s) {
+	static void inspect(String s) {
 		System.out.printf("[inspect] ");
 		for (int i = 0; i < s.length(); i++) {
 			int code = s.charAt(i);
@@ -32,7 +32,7 @@ public class U {
 		System.out.println();
 	}
 
-	public static String[] cadr(String s) {
+	static String[] cadr(String s) {
 		String[] rs = new String[] { "", "" };
 		StringBuffer sb = new StringBuffer();
 		for (int i = 0; i < s.length(); i++) {
@@ -47,23 +47,48 @@ public class U {
 		return rs;
 	}
 
-	public static void say(String msg) {
+	static void say(String msg) {
 		System.out.println(msg);
 	}
 
-	public static void say(String msg, String suffix) {
+	static void say(String msg, String suffix) {
 		System.out.printf("%s%s", msg, suffix);
 	}
 
-	public static void say() {
+	static void say() {
 		System.out.println();
 	}
 
-	public static void fmt(String f, Object... args) {
+	static void fmt(String f, Object... args) {
 		System.out.printf(f, args);
 	}
 
-	public static void say(char c, String end) {
+	static void say(char c, String end) {
 		System.out.printf("%c%s", c, end);
+	}
+
+	static String rpad(String s, int lim) {
+		StringBuffer zeza = new StringBuffer(s);
+		if (s.length() < lim) {
+			for (int i = 0; i < lim - s.length(); i++) {
+				zeza.append(" ");
+			}
+		}
+		return zeza.toString();
+	}
+	
+	static String lpad(String s,int lim) {
+		StringBuffer sb=new StringBuffer();
+		if(s.length()<lim) {
+			for(int i=0;i<lim-s.length();i++) {
+				sb.append(" ");
+			}
+			sb.append(s);
+		}
+		return sb.toString();
+	}
+
+	static boolean isPrintable(int c) {
+		return c >= 32 && c <= 126;
 	}
 }
