@@ -26,6 +26,8 @@ class Surface extends JPanel implements KeyListener, MouseListener {
   private void wipe(Graphics2D g2d) {
     g2d.setPaint(bg);
     g2d.fillRect(0,0,getWidth(),getHeight());
+    g2d.setPaint(fg);
+    g2d.drawRect(0,0,getWidth()-1,getHeight()-1);
   }
 
   private void draw(Graphics2D g2d) {
