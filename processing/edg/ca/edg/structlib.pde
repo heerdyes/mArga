@@ -23,16 +23,36 @@ class LineList {
     nlines=0;
   }
 
-  void rndr(float x, float y, float offset) {
+  void rndr(PGraphics target, float x, float y, float offset) {
     int j=0;
     for (LineNode i=head; i!=null; i=i.next, j++) {
       float yoff=y+offset*j;
-      i.rndr(x+2*txtsz, yoff);
-      text(String.format("%02d", j), x, yoff);
+      i.rndr(target, x+2*txtsz, yoff);
+      target.text(String.format("%02d", j), x, yoff);
       if (i==cur) {
-        stroke(dgrn);
-        line(x+25, yoff-txtsz/2-1, width-1, yoff-txtsz/2-1);
-        line(x+25, yoff+txtsz/2+1, width-1, yoff+txtsz/2+1);
+        target.stroke(dgrn);
+        target.line(x+25, yoff-txtsz/2-1, width-1, yoff-txtsz/2-1);
+        target.line(x+25, yoff+txtsz/2+1, width-1, yoff+txtsz/2+1);
+      }
+    }
+  }
+
+  void rndr(PGraphics target, float x, float y, float offset, int stln, int nlns) {
+    if (nlns==-1) {
+      rndr(target, x, y, offset);
+    } else {
+      int j=0;
+      LineNode i;
+      for (i=head; i!=null && j<stln; i=i.next, j++);
+      for (; i!=null && (j-stln)<nlns; i=i.next, j++) {
+        float yoff=y+offset*(j-stln);
+        i.rndr(target, x+2*txtsz, yoff);
+        target.text(String.format("%02d", j), x, yoff);
+        if (i==cur) {
+          target.stroke(dgrn);
+          target.line(x+25, yoff-txtsz/2-1, width-1, yoff-txtsz/2-1);
+          target.line(x+25, yoff+txtsz/2+1, width-1, yoff+txtsz/2+1);
+        }
       }
     }
   }
@@ -42,7 +62,7 @@ class LineList {
     nlines=0;
   }
 
-  void savefile(String fn) {
+  void savefile(String fn, PrintWriter pw) {
     if (nlines>0) {
       println("saving file: "+fn);
       pw=createWriter(fn);
@@ -113,8 +133,8 @@ class LineNode {
     next=null;
   }
 
-  void rndr(float x, float y) {
-    s.rndr(x, y, k*txtsz);
+  void rndr(PGraphics target, float x, float y) {
+    s.rndr(target, x, y, k*txtsz);
   }
 }
 
@@ -250,20 +270,20 @@ class CharList {
     return tmp.toString();
   }
 
-  void rndr(float x, float y, float sz) {
+  void rndr(PGraphics target, float x, float y, float sz) {
     float offset=x;
     float yoff=y+txtsz/2+2;
     for (CharNode i=head; i!=null; i=i.next) {
-      i.rndr(offset, y);
+      i.rndr(target, offset, y);
       if (i==cur) {
-        stroke(grn);
-        line(offset-txtsz/4, yoff, offset+txtsz/4-1, yoff);
+        target.stroke(grn);
+        target.line(offset-txtsz/4, yoff, offset+txtsz/4-1, yoff);
       }
       offset+=sz;
     }
     if (cur==null) {
-      stroke(grn);
-      line(offset-txtsz/4, yoff, offset+txtsz/4-1, yoff);
+      target.stroke(grn);
+      target.line(offset-txtsz/4, yoff, offset+txtsz/4-1, yoff);
     }
   }
 }
@@ -278,9 +298,9 @@ class CharNode {
     prev=null;
   }
 
-  void rndr(float x, float y) {
-    fill(grn);
-    noStroke();
-    text(""+c, x, y);
+  void rndr(PGraphics target, float x, float y) {
+    target.fill(grn);
+    target.noStroke();
+    target.text(""+c, x, y);
   }
 }

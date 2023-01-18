@@ -4,19 +4,14 @@ color dgrn=color(0, 96, 0);
 float txtsz=24;
 float k=0.75;
 float lngap=1.5;
-PrintWriter pw;
 Buf buf;
-File pwd;
-boolean DEBUGGING=false;
+boolean DEBUGGING=true;
+boolean scalemode=false;
 
 void setup() {
-  size(1280, 720);
+  size(1600, 900);
   background(0);
-  textAlign(CENTER, CENTER);
-  textSize(txtsz);
   ocrbw=createFont("bitwise-font/Bitwise-m19x.ttf", txtsz);
-  textFont(ocrbw);
-  pwd=new File(".");
   buf=new Buf(20, 20, width-40, height-40, lngap, txtsz);
   buf.rndr();
 }
