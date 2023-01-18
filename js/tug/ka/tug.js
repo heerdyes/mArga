@@ -3,7 +3,7 @@ let log=document.getElementById('transcript');
 const cnv=document.getElementById('cnv');
 const g=cnv.getContext('2d');
 
-const trtl=new Turtle(g,cnv.width/2,cnv.height/2);
+const trtl=new Turtle(g,cnv);
 const sh=new Shell(trtl);
 
 g.lineWidth=1.0;
