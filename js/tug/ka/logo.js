@@ -1,10 +1,11 @@
 // turtle stuff
 class Turtle {
-  constructor(ctx,x,y) {
-    this.x=x;
-    this.y=y;
+  constructor(ctx,cnv) {
+    this.x=cnv.width/2;
+    this.y=cnv.height/2;
     this.a=0.0;
     this.g=ctx;
+    this.cnv=cnv;
   }
   
   fd(r) {
@@ -31,6 +32,11 @@ class Turtle {
   rt(a) {
     this.lt(-a);
   }
+  
+  clrscr() {
+    this.g.fillStyle='white';
+    this.g.fillRect(1,1,this.cnv.width-2,this.cnv.height-2);
+  }
 }
 
 // the language processor
@@ -56,7 +62,12 @@ class Shell {
   
   parseAssignment(s) {}
   
-  parseCmd(s) {}
+  parseCmd(s) {
+    if(s=='cs'){
+      console.log('clearing screen');
+      this.t.clrscr();
+    }
+  }
 
   // command processing delegator
   cmdproc(s) {
