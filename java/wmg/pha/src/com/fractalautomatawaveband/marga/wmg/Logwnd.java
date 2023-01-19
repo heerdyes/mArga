@@ -1,15 +1,18 @@
 package com.fractalautomatawaveband.marga.wmg;
 
 import java.awt.*;
+import java.util.*;
 import static com.fractalautomatawaveband.marga.wmg.L.d;
 
-class Shwnd implements Wnd
+class Logwnd implements Wnd
 {
   int x,y,w,h;
   Color bg,fg,hg,ng;
-  StringBuffer sb;
+  ArrayList<String> lines;
   int mrgnleft,mrgntop;
   Font fnt;
+  int rowht;
+  int lnlim;
   
   public int getX() { return x; }
   public int getY() { return y; }
@@ -21,7 +24,7 @@ class Shwnd implements Wnd
     y=yy;
   }
   
-  Shwnd(int xx,int yy,int ww,int hh)
+  Logwnd(int xx,int yy,int ww,int hh,int fsz)
   {
     x=xx;
     y=yy;
@@ -31,40 +34,37 @@ class Shwnd implements Wnd
     fg=new Color(0,255,255,255);
     hg=new Color(0,255,255,255);
     ng=new Color(0,64,64,255);
-    sb=new StringBuffer();
-    fnt=new Font("Larabiefont Rg", Font.PLAIN, 14);
+    lines=new ArrayList<>();
+    fnt=new Font("Larabiefont Rg", Font.PLAIN, fsz);
     mrgnleft=5;
     mrgntop=15;
+    rowht=12;
+    lnlim=hh/rowht-1;
   }
   
-  void cmdproc(String s)
+  public void onkeydown(char c,int kc) {}
+  
+  public void onkeyup(char c,int kc) {}
+  
+  public void onclick(int mx,int my) {}
+  
+  void renderlines(Graphics2D g2)
   {
-    if(s.equals("time"))
+    int ir=0;
+    for(String s:lines)
     {
-      sb.append(""+System.currentTimeMillis());
+      g2.drawString(s,x+mrgnleft,y+mrgntop+ir*rowht);
+      ir++;
     }
   }
   
-  public void onkeydown(char c,int kc)
+  void addln(String s)
   {
-    if(kc==10)
+    if(lines.size()>=lnlim)
     {
-      String cmd=sb.toString();
-      sb.setLength(0);
-      cmdproc(cmd);
+      lines.remove(0);
     }
-    else
-    {
-      sb.append(c);
-    }
-  }
-  
-  public void onkeyup(char c,int kc)
-  {}
-  
-  public void onclick(int mx,int my)
-  {
-    //d("onclick",String.format("@ (%03d, %03d)",mx,my));
+    lines.add(s);
   }
   
   public void rndr(Graphics2D g2,boolean infocus)
@@ -75,7 +75,7 @@ class Shwnd implements Wnd
     g2.fillRect(x,y,w,h);
     g2.setColor(fg);
     g2.setFont(fnt);
-    g2.drawString(sb.toString(),x+mrgnleft,y+mrgntop);
+    renderlines(g2);
   }
   
   public boolean containsPoint(int xx,int yy)
