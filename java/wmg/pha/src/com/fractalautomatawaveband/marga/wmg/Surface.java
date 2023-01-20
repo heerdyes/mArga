@@ -6,9 +6,11 @@ import java.awt.Graphics2D;
 import java.awt.event.*;
 import javax.swing.*;
 import java.util.*;
-import static com.fractalautomatawaveband.marga.wmg.L.d;
+import static com.fractalautomatawaveband.marga.wmg.util.L.d;
+import com.fractalautomatawaveband.marga.wmg.wnd.*;
+import com.fractalautomatawaveband.marga.wmg.evt.*;
 
-class Surface extends JPanel implements KeyListener, MouseListener, MouseMotionListener
+public class Surface extends JPanel implements KeyListener, MouseListener, MouseMotionListener, WndObs
 {
   HashMap<String,Wnd> wndmap;
   Color cbg;
@@ -46,7 +48,7 @@ class Surface extends JPanel implements KeyListener, MouseListener, MouseMotionL
     {
       return;
     }
-    Wnd x=new LogWnd(5,600-42,900-11,40,10);
+    Wnd x=new LogWnd(lk,5,600-42,900-11,40,10);
     wndmap.put(lk,x);
   }
 
@@ -105,18 +107,19 @@ class Surface extends JPanel implements KeyListener, MouseListener, MouseMotionL
   void onkeydown(char c,int kc)
   {
     log("keydown: "+kc);
-    // if <SPACE> create a new Shwnd at mouse_location
+    // if <SPACE> create a new ShWnd at mouse_location
     if(kc==32)
     {
       String wn=String.format("w%02d",wctr++);
-      Wnd x=new ShWnd(mouseX,mouseY,144,81);
+      Wnd x=new ShWnd(wn,mouseX,mouseY,144,81);
       wndmap.put(wn,x);
       log("created wnd:"+wn+" at ("+mouseX+","+mouseY+")!");
     }
     else if(c=='/')
     {
       String wn=String.format("w%02d",wctr++);
-      Wnd w=new DirWnd(mouseX,mouseY,144,144,"dirw");
+      Wnd w=new DirWnd(wn,mouseX,mouseY,144,144,"dirw");
+      w.addWndObserver(this);
       wndmap.put(wn,w);
       log("created wnd:"+wn+" at ("+mouseX+","+mouseY+")!");
     }
@@ -284,6 +287,11 @@ class Surface extends JPanel implements KeyListener, MouseListener, MouseMotionL
       }
     }
     return "/";
+  }
+  
+  public void signal(Wnd src,String msg)
+  {
+    log(src.getID(),msg);
   }
 }
 

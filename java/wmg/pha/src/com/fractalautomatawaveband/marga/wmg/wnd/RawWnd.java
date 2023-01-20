@@ -1,13 +1,17 @@
-package com.fractalautomatawaveband.marga.wmg;
+package com.fractalautomatawaveband.marga.wmg.wnd;
 
 import java.awt.*;
-import static com.fractalautomatawaveband.marga.wmg.L.d;
+import static com.fractalautomatawaveband.marga.wmg.util.L.d;
+import com.fractalautomatawaveband.marga.wmg.evt.*;
+import java.util.*;
 
-class RawWnd implements Wnd
+public class RawWnd implements Wnd
 {
   protected int x,y,w,h;
   protected Color bg,fg,hg,ng,dfg;
   protected int mrgnleft,mrgntop;
+  HashSet<WndObs> observers;
+  String id;
   
   public int getX() { return x; }
   public int getY() { return y; }
@@ -23,9 +27,12 @@ class RawWnd implements Wnd
     w=ww;
     h=hh;
   }
+  public String getID() { return id; }
+  public void setID(String _id) { id=_id; }
   
-  public RawWnd(int xx,int yy,int ww,int hh)
+  public RawWnd(String _id,int xx,int yy,int ww,int hh)
   {
+    id=_id;
     x=xx;
     y=yy;
     w=ww;
@@ -37,6 +44,7 @@ class RawWnd implements Wnd
     fg=dfg;
     mrgnleft=5;
     mrgntop=15;
+    observers=new HashSet<>();
   }
   
   public void onkeydown(char c,int kc)
@@ -60,6 +68,16 @@ class RawWnd implements Wnd
   public boolean containsPoint(int xx,int yy)
   {
     return x<xx && y<yy && xx<(x+w) && yy<(y+h);
+  }
+  
+  public void addWndObserver(WndObs wo)
+  {
+    observers.add(wo);
+  }
+  
+  public void removeWndObserver(WndObs wo)
+  {
+    observers.remove(wo);
   }
   
   public void cleanup()

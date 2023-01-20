@@ -1,10 +1,10 @@
-package com.fractalautomatawaveband.marga.wmg;
+package com.fractalautomatawaveband.marga.wmg.wnd;
 
 import java.awt.*;
 import java.util.*;
-import static com.fractalautomatawaveband.marga.wmg.L.d;
+import static com.fractalautomatawaveband.marga.wmg.util.L.d;
 
-class LogWnd extends RawWnd
+public class LogWnd extends RawWnd
 {
   ArrayList<String> lines;
   Font fnt;
@@ -21,16 +21,16 @@ class LogWnd extends RawWnd
     y=yy;
   }
   
-  LogWnd(int xx,int yy,int ww,int hh,int fsz)
+  public LogWnd(String id,int xx,int yy,int ww,int hh,int fsz)
   {
-    super(xx,yy,ww,hh);
+    super(id,xx,yy,ww,hh);
     lines=new ArrayList<>();
     fnt=new Font("Larabiefont Rg", Font.PLAIN, fsz);
     rowht=fsz;
     lnlim=hh/rowht-1;
   }
   
-  void renderlines(Graphics2D g2)
+  public void renderlines(Graphics2D g2)
   {
     int ir=0;
     for(String s:lines)
@@ -40,7 +40,7 @@ class LogWnd extends RawWnd
     }
   }
   
-  void addln(String s)
+  public void addln(String s)
   {
     if(lines.size()>=lnlim)
     {

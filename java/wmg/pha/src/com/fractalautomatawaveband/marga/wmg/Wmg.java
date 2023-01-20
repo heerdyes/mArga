@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
+import static com.fractalautomatawaveband.marga.wmg.util.L.d;
 
 public class Wmg extends JFrame
 {
@@ -30,7 +31,7 @@ public class Wmg extends JFrame
     String[] fntnms=GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
     for(String s:fntnms)
     {
-      L.d(s);
+      d(s);
     }
   }
 

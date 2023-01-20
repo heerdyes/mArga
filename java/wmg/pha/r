@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-rm -rf bin
-javac -cp bin -d bin src/com/fractalautomatawaveband/marga/wmg/*.java
+ant
 java -cp bin com.fractalautomatawaveband.marga.wmg.Wmg
+

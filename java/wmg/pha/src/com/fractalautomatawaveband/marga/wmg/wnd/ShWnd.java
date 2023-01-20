@@ -1,9 +1,9 @@
-package com.fractalautomatawaveband.marga.wmg;
+package com.fractalautomatawaveband.marga.wmg.wnd;
 
 import java.awt.*;
-import static com.fractalautomatawaveband.marga.wmg.L.d;
+import static com.fractalautomatawaveband.marga.wmg.util.L.d;
 
-class ShWnd extends RawWnd
+public class ShWnd extends RawWnd
 {
   StringBuffer sb;
   Font fnt;
@@ -18,14 +18,14 @@ class ShWnd extends RawWnd
     y=yy;
   }
   
-  ShWnd(int xx,int yy,int ww,int hh)
+  public ShWnd(String id,int xx,int yy,int ww,int hh)
   {
-    super(xx,yy,ww,hh);
+    super(id,xx,yy,ww,hh);
     sb=new StringBuffer();
     fnt=new Font("Larabiefont Rg", Font.PLAIN, 14);
   }
   
-  void cmdproc(String s)
+  public void cmdproc(String s)
   {
     if(s.equals("time"))
     {

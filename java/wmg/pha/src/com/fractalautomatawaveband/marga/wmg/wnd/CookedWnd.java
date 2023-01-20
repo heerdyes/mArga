@@ -1,4 +1,4 @@
-package com.fractalautomatawaveband.marga.wmg;
+package com.fractalautomatawaveband.marga.wmg.wnd;
 
 import java.awt.*;
 
@@ -12,9 +12,9 @@ public class CookedWnd extends RawWnd
   
   public boolean isMinified() { return minified; }
   
-  public CookedWnd(int x,int y,int w,int h,String t)
+  public CookedWnd(String id,int x,int y,int w,int h,String t)
   {
-    super(x,y,w,h);
+    super(id,x,y,w,h);
     hbak=h;
     f=new Font("Larabiefont Rg", Font.PLAIN, 12);
     title=t;
