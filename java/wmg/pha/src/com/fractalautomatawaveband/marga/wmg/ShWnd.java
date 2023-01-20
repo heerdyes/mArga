@@ -3,12 +3,9 @@ package com.fractalautomatawaveband.marga.wmg;
 import java.awt.*;
 import static com.fractalautomatawaveband.marga.wmg.L.d;
 
-class Shwnd implements Wnd
+class ShWnd extends RawWnd
 {
-  int x,y,w,h;
-  Color bg,fg,hg,ng;
   StringBuffer sb;
-  int mrgnleft,mrgntop;
   Font fnt;
   
   public int getX() { return x; }
@@ -21,20 +18,11 @@ class Shwnd implements Wnd
     y=yy;
   }
   
-  Shwnd(int xx,int yy,int ww,int hh)
+  ShWnd(int xx,int yy,int ww,int hh)
   {
-    x=xx;
-    y=yy;
-    w=ww;
-    h=hh;
-    bg=new Color(0,0,0,255);
-    fg=new Color(0,255,255,255);
-    hg=new Color(0,255,255,255);
-    ng=new Color(0,64,64,255);
+    super(xx,yy,ww,hh);
     sb=new StringBuffer();
     fnt=new Font("Larabiefont Rg", Font.PLAIN, 14);
-    mrgnleft=5;
-    mrgntop=15;
   }
   
   void cmdproc(String s)
@@ -59,28 +47,12 @@ class Shwnd implements Wnd
     }
   }
   
-  public void onkeyup(char c,int kc)
-  {}
-  
-  public void onclick(int mx,int my)
-  {
-    //d("onclick",String.format("@ (%03d, %03d)",mx,my));
-  }
-  
   public void rndr(Graphics2D g2,boolean infocus)
   {
-    g2.setColor(infocus?hg:ng);
-    g2.drawRect(x-1,y-1,w+1,h+1);
-    g2.setPaint(bg);
-    g2.fillRect(x,y,w,h);
+    super.rndr(g2,infocus);
     g2.setColor(fg);
     g2.setFont(fnt);
     g2.drawString(sb.toString(),x+mrgnleft,y+mrgntop);
-  }
-  
-  public boolean containsPoint(int xx,int yy)
-  {
-    return x<xx && y<yy && xx<(x+w) && yy<(y+h);
   }
 }
 

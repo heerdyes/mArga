@@ -13,6 +13,8 @@ interface Wnd
   int getW();
   int getH();
   void setXY(int x,int y);
+  void setWH(int w,int h);
   boolean containsPoint(int x,int y);
+  void cleanup();
 }
 

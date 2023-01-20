@@ -14,10 +14,11 @@ class Surface extends JPanel implements KeyListener, MouseListener, MouseMotionL
   Color cbg;
   Paint bg, fg;
   Font fnt;
-  int mouseX,mouseY;
+  int mouseX=0,mouseY=0,pmouseX,pmouseY;
   int wctr,wlog;
   String focusedWnd;
   boolean whold=false;
+  boolean wresize=false;
   int hx,hy;
 
   Surface()
@@ -45,7 +46,7 @@ class Surface extends JPanel implements KeyListener, MouseListener, MouseMotionL
     {
       return;
     }
-    Wnd x=new Logwnd(5,600-42,900-11,40,10);
+    Wnd x=new LogWnd(5,600-42,900-11,40,10);
     wndmap.put(lk,x);
   }
 
@@ -61,7 +62,7 @@ class Surface extends JPanel implements KeyListener, MouseListener, MouseMotionL
   {
     if(wndmap.containsKey("/sys/log"))
     {
-      Logwnd lw=(Logwnd)wndmap.get("/sys/log");
+      LogWnd lw=(LogWnd)wndmap.get("/sys/log");
       lw.addln(msg);
       repaint();
     }
@@ -108,8 +109,15 @@ class Surface extends JPanel implements KeyListener, MouseListener, MouseMotionL
     if(kc==32)
     {
       String wn=String.format("w%02d",wctr++);
-      Wnd x=new Shwnd(mouseX,mouseY,144,81);
+      Wnd x=new ShWnd(mouseX,mouseY,144,81);
       wndmap.put(wn,x);
+      log("created wnd:"+wn+" at ("+mouseX+","+mouseY+")!");
+    }
+    else if(c=='/')
+    {
+      String wn=String.format("w%02d",wctr++);
+      Wnd w=new DirWnd(mouseX,mouseY,144,144,"dirw");
+      wndmap.put(wn,w);
       log("created wnd:"+wn+" at ("+mouseX+","+mouseY+")!");
     }
   }
@@ -122,7 +130,7 @@ class Surface extends JPanel implements KeyListener, MouseListener, MouseMotionL
   
   boolean ismodkey(int kc)
   {
-    return kc==16 || kc==27;
+    return kc==16 || kc==27 || kc==18;
   }
   
   void onmodkeydown(int kc)
@@ -145,6 +153,16 @@ class Surface extends JPanel implements KeyListener, MouseListener, MouseMotionL
         hy=mouseY-w.getY();
       }
     }
+    else if(kc==18)
+    {
+      focusedWnd=findWnd(mouseX,mouseY);
+      if(focusedWnd.equals("/"))
+      { /* no-op */ }
+      else
+      {
+        wresize=true;
+      }
+    }
   }
   
   void onmodkeyup(int kc)
@@ -152,6 +170,10 @@ class Surface extends JPanel implements KeyListener, MouseListener, MouseMotionL
     if(kc==16)
     {
       whold=false;
+    }
+    else if(kc==18)
+    {
+      wresize=false;
     }
   }
 
@@ -197,11 +219,26 @@ class Surface extends JPanel implements KeyListener, MouseListener, MouseMotionL
 
   public void mouseMoved(MouseEvent e)
   {
+    pmouseX=mouseX;
+    pmouseY=mouseY;
     mouseX=e.getX();
     mouseY=e.getY();
     if(whold)
     {
       wndmap.get(focusedWnd).setXY(mouseX-hx,mouseY-hy);
+      repaint();
+    }
+    else if(wresize)
+    {
+      Wnd w=wndmap.get(focusedWnd);
+      if(w instanceof CookedWnd && ((CookedWnd)w).isMinified())
+      {
+        w.setWH(w.getW()+mouseX-pmouseX,w.getH());
+      }
+      else
+      {
+        w.setWH(w.getW()+mouseX-pmouseX,w.getH()+mouseY-pmouseY);
+      }
       repaint();
     }
   }
@@ -221,8 +258,18 @@ class Surface extends JPanel implements KeyListener, MouseListener, MouseMotionL
     }
     else
     {
-      Wnd w=wndmap.get(focusedWnd);
-      w.onclick(e.getX()-w.getX(), e.getY()-w.getY());
+      if(e.getButton()==MouseEvent.BUTTON3)
+      {
+        Wnd w=wndmap.remove(focusedWnd);
+        w.cleanup();
+        log("removed window: "+focusedWnd);
+        focusedWnd="/";
+      }
+      else
+      {
+        Wnd w=wndmap.get(focusedWnd);
+        w.onclick(e.getX()-w.getX(), e.getY()-w.getY());
+      }
     }
     repaint();
   }
