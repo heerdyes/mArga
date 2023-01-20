@@ -4,13 +4,17 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
+import static com.fractalautomatawaveband.marga.wmg.util.L.d;
 
-public class Wmg extends JFrame {
-  public Wmg() {
+public class Wmg extends JFrame
+{
+  public Wmg()
+  {
     initUI();
   }
 
-  private void initUI() {
+  private void initUI()
+  {
     Surface s = new Surface();
     add(s);
 
@@ -22,18 +26,23 @@ public class Wmg extends JFrame {
     this.addMouseMotionListener(s);
   }
 
-  static void chkfnt() {
+  static void chkfnt()
+  {
     String[] fntnms=GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
-    for(String s:fntnms) {
-      L.d(s);
+    for(String s:fntnms)
+    {
+      d(s);
     }
   }
 
-  public static void main(String[] args) {
+  public static void main(String[] args)
+  {
     EventQueue.invokeLater(
-        new Runnable() {
+        new Runnable()
+        {
           @Override
-          public void run() {
+          public void run()
+          {
             Wmg ex = new Wmg();
             ex.setUndecorated(true);
             ex.setVisible(true);

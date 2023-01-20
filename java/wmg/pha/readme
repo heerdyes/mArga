@@ -1,0 +1,5 @@
+# this is a floating window implementation
+# does not support tiling
+# windows can move around
+# windows can be resized
+
