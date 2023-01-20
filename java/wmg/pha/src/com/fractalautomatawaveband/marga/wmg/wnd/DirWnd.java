@@ -46,6 +46,22 @@ public class DirWnd extends CookedWnd
     }
   }
   
+  void broadcastMsg()
+  {
+    for(WndObs wo:observers)
+    {
+      try
+      {
+        String fcpath=flist.get(cursor).getCanonicalPath();
+        wo.signal(this,"editfile:"+fcpath);
+      }
+      catch(IOException ioe)
+      {
+        d("IOException", ioe.getMessage());
+      }
+    }
+  }
+  
   public void onkeydown(char c,int kc)
   {
     if(cursor<flist.size()-1 && kc==40)
@@ -71,11 +87,7 @@ public class DirWnd extends CookedWnd
       }
       else
       {
-        // notify observers
-        for(WndObs wo:observers)
-        {
-          wo.signal(this,flist.get(cursor).getName());
-        }
+        broadcastMsg();
       }
     }
   }

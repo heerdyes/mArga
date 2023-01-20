@@ -289,9 +289,31 @@ public class Surface extends JPanel implements KeyListener, MouseListener, Mouse
     return "/";
   }
   
-  public void signal(Wnd src,String msg)
+  void mkbuf(int bx,int by,String fp)
   {
-    log(src.getID(),msg);
+    String bufid="ed_"+(wctr++);
+    Wnd buf=new BufWnd(bufid,bx,by,360,180,fp);
+    wndmap.put(bufid,buf);
+  }
+  
+  public void signal(Wnd src,Object msg)
+  {
+    log(src.getID(), msg.toString());
+    if(msg instanceof String)
+    {
+      String sm=(String)msg;
+      String[] parts=sm.split(":");
+      if(parts[0].equals("editfile"))
+      {
+        String fp=parts[1];
+        log("SIGEDIT", fp);
+        mkbuf(src.getX()+src.getW()+10, src.getY(), fp);
+      }
+      else
+      {
+        log("SIGNOPE", "unknown command: "+parts[1]);
+      }
+    }
   }
 }
 

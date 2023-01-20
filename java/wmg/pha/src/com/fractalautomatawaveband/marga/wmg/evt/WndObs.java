@@ -4,6 +4,6 @@ import com.fractalautomatawaveband.marga.wmg.wnd.Wnd;
 
 public interface WndObs
 {
-  void signal(Wnd src,String msg);
+  void signal(Wnd src,Object msg);
 }
 
