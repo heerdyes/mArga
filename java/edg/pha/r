@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-java -cp bin com.fractalautomatawaveband.marga.edg.Main
+java -cp bin com.fractalautomatawaveband.marga.edg.pha.Main
 
