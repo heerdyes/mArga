@@ -1,4 +1,4 @@
-package com.fractalautomatawaveband.marga.edg;
+package com.fractalautomatawaveband.marga.edg.pha;
 
 public class Main
 {
