@@ -17,7 +17,7 @@ public class Edg extends Frame implements KeyListener
 
   public Edg()
   {
-    buf = new FileBuf("build.xml");
+    buf = new FileBuf("r");
     buf.loadbuf();
     x = new Cnv(w, h, buf);
     add(x);

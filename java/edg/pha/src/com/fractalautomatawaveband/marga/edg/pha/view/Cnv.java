@@ -44,10 +44,11 @@ public class Cnv extends Canvas implements BufObs
   void rndrbuf(CList cl, Graphics g)
   {
     int row = 0, col = 0;
-    int cx = mrgnleft + col * colwh;
-    int cy = mrgntop + row * (lineht + linegap);
+    int cx, cy;
     for (CNode cn = cl.getHead(); cn != null; cn = cn.getNext())
     {
+      cx = mrgnleft + col * colwh;
+      cy = mrgntop + row * (lineht + linegap);
       char c = cn.getSymbol();
       if (c == '\n')
       {
@@ -59,8 +60,6 @@ public class Cnv extends Canvas implements BufObs
         g.drawString("" + c, cx, cy);
         col++;
       }
-      cx = mrgnleft + col * colwh;
-      cy = mrgntop + row * (lineht + linegap);
       if (cn == buf.getCursor())
       {
         g.drawLine(cx, cy + 2, cx + 10, cy + 2);

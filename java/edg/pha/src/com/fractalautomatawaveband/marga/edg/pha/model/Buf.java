@@ -32,7 +32,7 @@ public class Buf
     return data;
   }
 
-  public void insch(char c)
+  public void owrch(char c)
   {
     if (cursor == null)
     {
@@ -44,49 +44,30 @@ public class Buf
     }
   }
 
-  void rwTillChar(char c)
+  public void insch(char c)
   {
-    for (; cursor.hasPrev(); cursor = cursor.getPrev())
+    if (cursor == null)
     {
-      if (cursor.getSymbol() == c)
-      {
-        cursor = cursor.getPrev();
-        break;
-      }
-    }
-  }
-
-  void ffTillChar(char c)
-  {
-    for (; cursor.hasNext(); cursor = cursor.getNext())
-    {
-      if (cursor.getSymbol() == c)
-      {
-        cursor = cursor.getNext();
-        break;
-      }
-    }
-  }
-
-  char delnode()
-  {
-    char x = cursor.getSymbol();
-    CNode old = cursor;
-    if (cursor.hasNext())
-    {
-      cursor = cursor.getNext();
+      cursor = data.addToTail(c);
     }
     else
     {
-      cursor = cursor.getPrev();
+      data.addBeforeNode(cursor, c);
     }
-    data.deleteNode(old);
-    return x;
+  }
+
+  void delnode()
+  {
+    if (cursor.hasNext())
+    {
+      CNode tmp = cursor.getNext();
+      data.deleteNode(tmp);
+    }
   }
 
   public void splkeydown(int kc)
   {
-    System.out.println("kc -> " + kc);
+    System.out.printf("kc -> %d, hasprev: %s\n", kc, cursor.hasPrev());
     if (kc == 37 && cursor.hasPrev())
     {
       cursor = cursor.getPrev();
@@ -97,16 +78,17 @@ public class Buf
     }
     else if (kc == 38 && cursor.hasPrev())
     {
-      rwTillChar('\n');
+      cursor = data.rwTillChar(cursor, '\n');
     }
     else if (kc == 40 && cursor.hasNext())
     {
-      ffTillChar('\n');
+      cursor = data.ffTillChar(cursor, '\n');
     }
     else if (kc == 127)
     {
       delnode();
     }
+    System.out.printf("cursor symbol: %c\n", cursor.getSymbol());
   }
 
   public boolean issplkey(int kc)
@@ -116,7 +98,6 @@ public class Buf
 
   public void keydown(int kc, char c)
   {
-    System.out.println("kc: " + kc);
     if (issplkey(kc))
     {
       splkeydown(kc);

@@ -96,6 +96,26 @@ public class CList
     return ins;
   }
 
+  public void addBeforeNode(CNode cn, char c)
+  {
+    if (cn == null)
+    {
+      addToHead(c);
+      return;
+    }
+    CNode tmp = cn.getPrev();
+    if (tmp == null)
+    {
+      addToHead(c);
+      return;
+    }
+    CNode ins = new CNode(c);
+    cn.setPrev(ins);
+    ins.setPrev(tmp);
+    ins.setNext(cn);
+    tmp.setNext(ins);
+  }
+
   public char popHead()
   {
     if (head == null)
@@ -134,6 +154,32 @@ public class CList
     tail.setPrev(null);
     tail = tmp;
     return x;
+  }
+
+  public CNode rwTillChar(CNode cursor, char c)
+  {
+    for (; cursor.hasPrev(); cursor = cursor.getPrev())
+    {
+      if (cursor.getSymbol() == c)
+      {
+        cursor = cursor.getPrev();
+        break;
+      }
+    }
+    return cursor;
+  }
+
+  public CNode ffTillChar(CNode cursor, char c)
+  {
+    for (; cursor.hasNext(); cursor = cursor.getNext())
+    {
+      if (cursor.getSymbol() == c)
+      {
+        cursor = cursor.getNext();
+        break;
+      }
+    }
+    return cursor;
   }
 
   public char deleteNode(CNode cn)
