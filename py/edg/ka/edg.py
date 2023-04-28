@@ -1,12 +1,14 @@
-import tkinter
+#!/usr/bin/env python3
+import tkinter as tk
 
 
-root=tkinter.Tk()
-c=tkinter.Canvas(root,bg='black',width=1280,height=720)
+root=tk.Tk()
+c=tk.Canvas(root,bg='black',width=1280,height=720)
 cmap={
   'a':[0.0,0.0,0.5,0.0,0.5,1.0,0.0,1.0,0.0,0.5,0.5,0.5],
   'b':[0.0,0.0,0.0,1.0,0.5,1.0,0.5,0.5,0.0,0.5],
-  'z':[0.0,0.0,1.0,0.0,0.0,1.0,1.0,1.0]
+  'z':[0.0,0.0,1.0,0.0,0.0,1.0,1.0,1.0],
+  'c':[1.0,0.0,0.0,0.0,0.0,1.0,1.0,1.0]
 }
 
 
@@ -24,9 +26,10 @@ def polyline(cxy,pts,k):
 
 
 # flow begins
-polyline([100,100],cmap['a'],80)
-polyline([200,100],cmap['b'],80)
-polyline([300,100],cmap['z'],80)
+polyline([100,100],cmap['a'],30)
+polyline([200,100],cmap['b'],40)
+polyline([300,100],cmap['z'],50)
+polyline([400,100],cmap['c'],30)
 
 c.pack()
 root.mainloop()
