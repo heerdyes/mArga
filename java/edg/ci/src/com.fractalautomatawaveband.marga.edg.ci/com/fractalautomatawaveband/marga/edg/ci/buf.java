@@ -4,23 +4,35 @@ import java.util.ArrayList;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 
 public class buf
 {
   String name;
   String filepath;
   StringBuffer data;
-  ArrayList<Integer> newlines;
   int ptr;
   boolean capslock=false;
+  boolean shouldrndr=true;
+  Font fnt;
+  int fntsz;
   
-  public buf(String nm,String fp)
+  public buf(String nm,String fp,String f)
   {
     name=nm;
     filepath=fp;
-    data=new StringBuffer("");
-    newlines=new ArrayList<>();
-    ptr=-1;
+    data=new StringBuffer();
+    ptr=0;
+    fntsz=20;
+    fnt=Font.font(f, fntsz);
+  }
+  
+  void dumpfonts()
+  {
+    for(String fn:Font.getFontNames())
+    {
+      util.d(fn);
+    }
   }
   
   public void insc(KeyCode kc)
@@ -40,7 +52,6 @@ public class buf
     else if(c.equals("Enter"))
     {
       ac="\n";
-      newlines.add(ptr);
     }
     else if(c.equals("Period"))
     {
@@ -54,12 +65,17 @@ public class buf
     {
       ac="/";
     }
+    else if(c.equals("Backspace"))
+    {
+      ptr-=1;
+      ac="";
+    }
     else if(kc.isLetterKey() && !capslock)
     {
       ac=c.toLowerCase();
     }
-    data.append(ac);
-    ptr+=1;
+    data.insert(ptr, ac);
+    ptr+=ac.length();
   }
     
   public void gotoln(int n)
@@ -72,24 +88,48 @@ public class buf
     System.out.println(data.toString());
   }
   
+  public void clear(GraphicsContext gc)
+  {
+    gc.setFill(Color.rgb(0,0,0));
+    gc.fillRect(0,0,1280,720);
+    gc.setStroke(Color.rgb(255,192,0,0.4));
+    gc.strokeRect(1,1,1278,718);
+  }
+  
   public void rndr(GraphicsContext gc)
   {
+    if(!shouldrndr)
+    {
+      return;
+    }
+    clear(gc);
     int prev=0;
     int lgap=25;
     int ctr=0;
     int mleft=80;
     int mlnum=12;
     int mtop=50;
+    int nlcur=0;
+    int nlnxt=data.indexOf("\n");
+    
     gc.setFill(Color.rgb(0,255,0));
-    for(int nx : newlines)
+    gc.setFont(fnt);
+    while(nlnxt!=-1)
     {
       gc.fillText(String.format("%03d: ", ctr), mlnum, mtop+lgap*ctr);
-      gc.fillText(data.substring(prev,nx), mleft, mtop+lgap*ctr);
-      prev=nx+1;
+      gc.fillText(data.substring(nlcur, nlnxt), mleft, mtop+lgap*ctr);
+      nlcur=nlnxt+1;
+      nlnxt=data.indexOf("\n", nlcur);
       ctr+=1;
     }
     gc.fillText(String.format("%03d: ", ctr), mlnum, mtop+lgap*ctr);
-    gc.fillText(data.substring(prev, data.length()), mleft, mtop+lgap*ctr);
+    gc.fillText(data.substring(nlcur), mleft, mtop+lgap*ctr);
+    shouldrndr=false;
+  }
+  
+  public void enablerndr()
+  {
+    shouldrndr=true;
   }
 }
 

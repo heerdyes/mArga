@@ -7,7 +7,6 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.text.Font;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -51,7 +50,6 @@ public class edg extends Application
   double ouf=0.125;
   double inf=0.125;
   buf b;
-  Font fnt;
 
   void setupMouseSensor()
   {
@@ -115,17 +113,7 @@ public class edg extends Application
     gc.fillRect(0,0,1280,720);
     gc.setStroke(Color.rgb(255,192,0,0.4));
     gc.strokeRect(1,1,1278,718);
-    b=new buf("tmp","tmp");
-    fnt=Font.font("OCRA", 24);
-    gc.setFont(fnt);
-  }
-  
-  void dumpfonts()
-  {
-    for(String fn:Font.getFontNames())
-    {
-      util.d(fn);
-    }
+    b=new buf("tmp","tmp","OCRA");
   }
   
   void wipe()
@@ -138,7 +126,7 @@ public class edg extends Application
 
   void draw()
   {
-    wipe();
+    //wipe();
     b.rndr(gc);
     t=t+dt;
   }
@@ -152,6 +140,7 @@ public class edg extends Application
       System.exit(0);
     }
     b.insc(keyCode);
+    b.enablerndr();
   }
 
   void mousePressed(MouseEvent e){}
