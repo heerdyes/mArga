@@ -6,7 +6,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
-public class buf
+public class buf extends box
 {
   String name;
   String filepath;
@@ -16,6 +16,7 @@ public class buf
   boolean shouldrndr=true;
   Font fnt;
   int fntsz;
+  String linesep;
   
   public buf(String nm,String fp,String f)
   {
@@ -24,6 +25,7 @@ public class buf
     data=new StringBuffer();
     ptr=0;
     fntsz=20;
+    linesep="\n";
     fnt=Font.font(f, fntsz);
   }
   
@@ -105,6 +107,7 @@ public class buf
     clear(gc);
     int prev=0;
     int lgap=25;
+    int cgap=20;
     int ctr=0;
     int mleft=80;
     int mlnum=12;
@@ -116,14 +119,16 @@ public class buf
     gc.setFont(fnt);
     while(nlnxt!=-1)
     {
-      gc.fillText(String.format("%03d: ", ctr), mlnum, mtop+lgap*ctr);
-      gc.fillText(data.substring(nlcur, nlnxt), mleft, mtop+lgap*ctr);
-      nlcur=nlnxt+1;
-      nlnxt=data.indexOf("\n", nlcur);
+      double yy=mtop+lgap*ctr;
+      gc.fillText(String.format("%03d: ", ctr), mlnum, yy);
+      gc.fillText(data.substring(nlcur, nlnxt), mleft, yy);
+      nlcur=nlnxt+linesep.length();
+      nlnxt=data.indexOf(linesep, nlcur);
       ctr+=1;
     }
     gc.fillText(String.format("%03d: ", ctr), mlnum, mtop+lgap*ctr);
     gc.fillText(data.substring(nlcur), mleft, mtop+lgap*ctr);
+    gc.fillRect(50, 50, 100, 60);
     shouldrndr=false;
   }
   

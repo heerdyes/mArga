@@ -50,6 +50,7 @@ public class edg extends Application
   double ouf=0.125;
   double inf=0.125;
   buf b;
+  box root;
 
   void setupMouseSensor()
   {
@@ -114,6 +115,7 @@ public class edg extends Application
     gc.setStroke(Color.rgb(255,192,0,0.4));
     gc.strokeRect(1,1,1278,718);
     b=new buf("tmp","tmp","OCRA");
+    root=new box(40,40,300,200);
   }
   
   void wipe()
@@ -127,7 +129,8 @@ public class edg extends Application
   void draw()
   {
     //wipe();
-    b.rndr(gc);
+    //b.rndr(gc);
+    root.rndr(gc);
     t=t+dt;
   }
 
