@@ -13,5 +13,22 @@ public class u
     }
     return false;
   }
+  
+  public static boolean sin(String s,String[] arr)
+  {
+    for(int i=0;i<arr.length;i++)
+    {
+      if(s.equals(arr[i]))
+      {
+        return true;
+      }
+    }
+    return false;
+  }
+  
+  public static void d(String msg)
+  {
+    System.out.println("[DEBUG] "+msg);
+  }
 }
 

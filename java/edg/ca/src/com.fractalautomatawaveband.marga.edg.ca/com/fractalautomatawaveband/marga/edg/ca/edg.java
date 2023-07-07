@@ -51,6 +51,7 @@ public class edg extends Application
   double inf=0.125;
   boolean sighalt=false;
   grid g;
+  region r0;
 
   void setupMouseSensor()
   {
@@ -118,6 +119,7 @@ public class edg extends Application
     gc.setStroke(Color.rgb(0,255,0));
     gc.strokeRect(1,1,1278,718);
     g=new grid(5,5,1280-10,720-10,9*3,16*3,gc);
+    r0=new region(g,5,5,10,4);
     g.rndr();
   }
   

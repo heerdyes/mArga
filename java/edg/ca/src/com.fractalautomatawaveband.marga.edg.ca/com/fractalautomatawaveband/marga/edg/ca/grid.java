@@ -19,6 +19,21 @@ public class grid extends box
   boolean capslock=false;
   String mode="Normal";
   
+  public void writerc(String s,int r,int c)
+  {
+    for(int i=0;i<s.length();i++)
+    {
+      cgrid[r][c+i]=s.charAt(i);
+    }
+    rndr();
+  }
+  
+  public void writerc(char z,int r,int c)
+  {
+    cgrid[r][c]=z;
+    rndr();
+  }
+  
   void initdata()
   {
     for(int i=0;i<rows;i++)
@@ -306,12 +321,21 @@ public class grid extends box
       }
     }
   }
+  
+  public void handlefnkey(String fk)
+  {
+    u.d("handling function key: "+fk);
+  }
 
   public void onkeydown(String kn)
   {
     if(kn.equals("Right") || kn.equals("Left") || kn.equals("Up") || kn.equals("Down"))
     {
       handlenav(kn);
+    }
+    else if(u.sin(kn, new String[]{"F1","F2","F3","F4","F5","F6","F7","F8","F9","F10","F11","F12"}))
+    {
+      handlefnkey(kn);
     }
     else if(kn.equals("Space"))
     {
