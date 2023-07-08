@@ -36,8 +36,11 @@ function rndr() {
         ypos += 24;
     }
     // registers
-    line(0, height - 30, width, height - 30);
-    text(r0, 30, height - 30);
+    stroke(0, 112, 0);
+    line(0, height - 55, width, height - 55);
+    noStroke();
+    text('r0=' + r0, 30, height - 30);
+    text('; state=' + state, 90, height - 30);
 }
 
 function nxtpos() {
@@ -66,15 +69,29 @@ function nxt() {
 
 function fde() {
     let inst = tape[tp.r][tp.c];
+    // fsm to parse register assignment
     if ('<>^v'.indexOf(inst) != -1) {
         tp.dir = inst;
-    } else if (state == 0 && inst == 'r') {
-        state = 1;
-    } else if (state == 1 && inst == '0') {
-        state = 2;
-    } else if (state == 2 && inst == '=') {
-        nxt();
-        r0 = tape[tp.r][tp.c];
+    } else if (state == 0) {
+        if (inst == 'r') {
+            state = 1;
+        } else {
+            state = 0;
+        }
+    } else if (state == 1) {
+        if (inst == '0') {
+            state = 2;
+        } else if (inst == 'r') {
+            state = 1;
+        } else {
+            state = 0;
+        }
+    } else if (state == 2) {
+        if (inst == '=') {
+            nxt();
+            r0 = tape[tp.r][tp.c];
+        }
+        state = 0;
     }
     nxt();
 }
