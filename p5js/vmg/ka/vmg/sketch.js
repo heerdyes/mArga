@@ -6,9 +6,12 @@ let tp = {
 let state = 0;
 let mxg, trb;
 let r0 = '/';
+let isrunning = true;
+let rows = tape.length;
+let cols = tape[0].length;
 
 function setup() {
-    createCanvas(1280, 720);
+    createCanvas(1200, 900);
     background(0);
     textSize(18);
     textFont("OCRA");
@@ -16,7 +19,12 @@ function setup() {
     trb = color(23, 202, 232);
     fill(mxg);
     noStroke();
-    frameRate(3);
+    frameRate(10);
+}
+
+function mkstats() {
+    let cpustate = isrunning ? 'ON' : 'OFF';
+    return `r0 = ${r0}; state = ${state}; cpu = ${cpustate}`;
 }
 
 function rndr() {
@@ -39,13 +47,10 @@ function rndr() {
     stroke(0, 112, 0);
     line(0, height - 55, width, height - 55);
     noStroke();
-    text('r0=' + r0, 30, height - 30);
-    text('; state=' + state, 90, height - 30);
+    text(mkstats(), 30, height - 30);
 }
 
 function nxtpos() {
-    let cols = tape[0].length;
-    let rows = tape.length;
     if (tp.dir == '>') {
         return [tp.r, (tp.c + 1) % cols];
     }
@@ -98,6 +103,25 @@ function fde() {
 
 function draw() {
     background(0);
-    fde();
+    if (isrunning) {
+        fde();
+    }
     rndr();
+}
+
+function keyPressed() {
+    console.log(keyCode);
+    if (key == ' ') {
+        isrunning = !isrunning;
+    } else if (keyCode == 37) {
+        tp.c = tp.c == 0 ? cols - 1 : tp.c - 1;
+    } else if (keyCode == 39) {
+        tp.c = (tp.c + 1) % cols;
+    } else if (keyCode == 38) {
+        tp.r = tp.r == 0 ? rows - 1 : tp.r - 1;
+    } else if (keyCode == 40) {
+        tp.r = (tp.r + 1) % rows;
+    } else {
+        tape[tp.r][tp.c] = key[0];
+    }
 }
