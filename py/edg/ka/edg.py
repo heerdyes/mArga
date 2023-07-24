@@ -1,33 +1,61 @@
 #!/usr/bin/env python3
 from tkinter import *
 from typo.z1 import *
+from sys import argv
 
 
 class Edg(Tk):
-  def __init__(self):
+  def __init__(self, fn):
     Tk.__init__(self)
     self.cmap = fntmap
     self.cursor = 0
     self.buffer = []
     self.curloc = [40, 40]
+    self.filename = fn
     self.cgap = 30
     self.lnht = 40
-    self.ftsz = 36
+    self.ftsz = 30
     self.wm_title('edg')
     self.cnv = Canvas(self, bg='black', width=1600, height=900)
     self.bind_all("<Any-KeyPress>", self.kbpress)
     self.cnv.pack()
+    self.file2buf()
     
+  def file2buf(self):
+    try:
+      with open(self.filename, 'r') as fp:
+        cdata = fp.read()
+        for c in cdata:
+          self.buffer.insert(self.cursor, c)
+          self.cursor += 1
+      self.rndrbuf()
+      print('file loaded!')
+    except FileNotFoundError as fnfe:
+      print('file not found, creating anew')
+      open(self.filename, 'a').close()
+  
+  def buf2file(self):
+    try:
+      with open(self.filename, 'w') as fp:
+        fp.write(''.join(self.buffer))
+      print('file written!')
+    except:
+      print('unable to write to file!')
+  
   def rndrbuf(self):
     self.cnv.delete('all')
     dx, dy = self.curloc
+    i = 0
     for c in self.buffer:
-      if c == '\r':
+      if i == self.cursor:
+        self.drawcursor([dx+2, dy-5], self.ftsz)
+      if c in '\r\n':
         dy += self.lnht
         dx = self.curloc[0]
       else:
         self.putch(c, [dx, dy], self.ftsz)
         dx += self.cgap
+      i += 1
     
   def kbpress(self, e):
     kc = e.keycode
@@ -37,16 +65,47 @@ class Edg(Tk):
       raise SystemExit()
     if kc==66:
       print('caps lock')
+    elif kc==68:
+      print('F2: save file')
+      self.buf2file()
     elif kc==50:
       print('shift')
     elif kc==22:
-      if self.cursor>0:
+      if self.cursor > 0:
         self.cursor -= 1
         self.buffer.pop(self.cursor)
         self.rndrbuf()
       else:
         print('already at beginning, cannot backspace')
-    elif e.char in '\r qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM,./<>?;:\'"[]{}1234567890-=_+|\\':
+    elif kc==119:
+      print('delete key')
+      if self.cursor < len(self.buffer):
+        self.buffer.pop(self.cursor)
+        self.rndrbuf()
+      else:
+        print('already at end, cannot delete')
+    elif kc==113:
+      print('left arrow')
+      if self.cursor > 0:
+        self.cursor -= 1
+        self.rndrbuf()
+    elif kc==114:
+      print('right arrow')
+      if self.cursor < len(self.buffer):
+        self.cursor += 1
+        self.rndrbuf()
+    elif kc==111:
+      print('up arrow')
+      if self.cursor != 0 and len(self.buffer) > 0:
+        while self.buffer[self.cursor-1] not in '\r\n' and self.cursor != 0:
+          self.cursor -= 1
+        self.rndrbuf()
+    elif kc==116:
+      print('down arrow')
+      while self.buffer[self.cursor] not in '\r\n' and self.cursor != len(self.buffer):
+        self.cursor += 1
+      self.rndrbuf()
+    elif e.char in '\r\n qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM,./<>?;:\'"#!*()[]{}1234567890-=_+|\\':
       self.buffer.insert(self.cursor, e.char)
       self.cursor += 1
       self.rndrbuf()
@@ -61,6 +120,9 @@ class Edg(Tk):
       pxy.append(cxy[1] + round(pts[i+1] * k))
       i += 2
     self.cnv.create_line(*pxy, fill='white')
+  
+  def drawcursor(self, cxy, k):
+    self.cnv.create_line(cxy[0], cxy[1], cxy[0], cxy[1]+k, fill='green')
     
   def putch(self, ch, cxy, k):
     if ch == ' ':
@@ -74,6 +136,12 @@ class Edg(Tk):
 
 
 # flow begins
-z = Edg()
+if len(argv) != 2:
+  print('usage: ./edg.py <filename>')
+  raise SystemExit
+
+fn = argv[1]
+print('editing file: %s'%fn)
+z = Edg(fn)
 z.mainloop()
 
