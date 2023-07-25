@@ -15,8 +15,10 @@ class Edg(Tk):
     self.cgap = 30
     self.lnht = 40
     self.ftsz = 30
+    self.nspaces4tab = 4
     self.wm_title('edg')
     self.cnv = Canvas(self, bg='black', width=1600, height=900)
+    self.bind("<Tab>", self.tabpress)
     self.bind_all("<Any-KeyPress>", self.kbpress)
     self.cnv.pack()
     self.file2buf()
@@ -52,11 +54,20 @@ class Edg(Tk):
       if c in '\r\n':
         dy += self.lnht
         dx = self.curloc[0]
+      elif c == '\t':
+        dx += self.ftsz + self.cgap
       else:
         self.putch(c, [dx, dy], self.ftsz)
         dx += self.cgap
       i += 1
-    
+  
+  def tabpress(self, e):
+    print('Tab')
+    for i in range(self.nspaces4tab):
+      self.buffer.insert(self.cursor, ' ')
+      self.cursor += 1
+    self.rndrbuf()
+  
   def kbpress(self, e):
     kc = e.keycode
     print(kc)
@@ -77,6 +88,10 @@ class Edg(Tk):
         self.rndrbuf()
       else:
         print('already at beginning, cannot backspace')
+    elif kc==37:
+      print('Ctrl')
+    elif kc==64:
+      print('Alt')
     elif kc==119:
       print('delete key')
       if self.cursor < len(self.buffer):
@@ -84,25 +99,21 @@ class Edg(Tk):
         self.rndrbuf()
       else:
         print('already at end, cannot delete')
-    elif kc==113:
-      print('left arrow')
+    elif kc==113: # arrow_left
       if self.cursor > 0:
         self.cursor -= 1
         self.rndrbuf()
-    elif kc==114:
-      print('right arrow')
+    elif kc==114: # arrow_right
       if self.cursor < len(self.buffer):
         self.cursor += 1
         self.rndrbuf()
-    elif kc==111:
-      print('up arrow')
+    elif kc==111: # arrow_up
       if self.cursor != 0 and len(self.buffer) > 0:
         while self.buffer[self.cursor-1] not in '\r\n' and self.cursor != 0:
           self.cursor -= 1
         self.rndrbuf()
-    elif kc==116:
-      print('down arrow')
-      while self.buffer[self.cursor] not in '\r\n' and self.cursor != len(self.buffer):
+    elif kc==116: # arrow down
+      while self.buffer[self.cursor-1] not in '\r\n' and self.cursor != len(self.buffer):
         self.cursor += 1
       self.rndrbuf()
     elif e.char in '\r\n qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM,./<>?;:\'"#!*()[]{}1234567890-=_+|\\':
