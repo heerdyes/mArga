@@ -2,6 +2,7 @@
 from tkinter import *
 from typo.z1 import *
 from sys import argv
+import cfg
 
 
 class Edg(Tk):
@@ -12,12 +13,12 @@ class Edg(Tk):
     self.buffer = []
     self.curloc = [40, 40]
     self.filename = fn
-    self.cgap = 30
-    self.lnht = 40
-    self.ftsz = 30
-    self.nspaces4tab = 4
+    self.ftsz = cfg.fontsize
+    self.cgap = cfg.chargap
+    self.lnht = cfg.lineheight
+    self.nspaces4tab = cfg.tabspaces
     self.wm_title('edg')
-    self.cnv = Canvas(self, bg='black', width=1600, height=900)
+    self.cnv = Canvas(self, bg=cfg.background, width=cfg.windowwidth, height=cfg.windowheight)
     self.bind("<Tab>", self.tabpress)
     self.bind_all("<Any-KeyPress>", self.kbpress)
     self.cnv.pack()
@@ -72,7 +73,7 @@ class Edg(Tk):
     kc = e.keycode
     print(kc)
     if kc==9:
-      print('sayonara!')
+      print(cfg.goodbyemsg)
       raise SystemExit()
     if kc==66:
       print('caps lock')
@@ -93,7 +94,7 @@ class Edg(Tk):
     elif kc==64:
       print('Alt')
     elif kc==119:
-      print('delete key')
+      print('Del')
       if self.cursor < len(self.buffer):
         self.buffer.pop(self.cursor)
         self.rndrbuf()
@@ -130,10 +131,10 @@ class Edg(Tk):
       pxy.append(cxy[0] + round(pts[i] * k))
       pxy.append(cxy[1] + round(pts[i+1] * k))
       i += 2
-    self.cnv.create_line(*pxy, fill='white')
+    self.cnv.create_line(*pxy, fill=cfg.foreground)
   
   def drawcursor(self, cxy, k):
-    self.cnv.create_line(cxy[0], cxy[1], cxy[0], cxy[1]+k, fill='green')
+    self.cnv.create_line(cxy[0], cxy[1], cxy[0], cxy[1]+k, fill=cfg.cursorcolor)
     
   def putch(self, ch, cxy, k):
     if ch == ' ':
@@ -148,7 +149,7 @@ class Edg(Tk):
 
 # flow begins
 if len(argv) != 2:
-  print('usage: ./edg.py <filename>')
+  print(cfg.usagemsg)
   raise SystemExit
 
 fn = argv[1]

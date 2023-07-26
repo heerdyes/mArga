@@ -1,0 +1,11 @@
+fontsize = 28
+chargap = 24
+lineheight = 36
+tabspaces = 4
+background = 'white'
+foreground = 'darkblue'
+cursorcolor = 'red'
+goodbyemsg = 'sayonara!'
+usagemsg = 'usage: ./edg.py <filename>'
+windowwidth = 1600
+windowheight = 900
