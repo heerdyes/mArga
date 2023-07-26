@@ -17,6 +17,7 @@ upon any language, create
   - flow based programming environment (fb[c|g|e|l])
   - file system (fs[c|g|e|l])
   - database (db[c|g|e|l])
+  - cad (cad[c|g|e|l])
 
 aspects
   - console (basic)
