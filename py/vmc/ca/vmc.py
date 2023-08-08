@@ -4,10 +4,11 @@ from inst import *
 
 # stack based integer type vm
 
-T=[]
-PC=0
-S=[]
-ZF=False
+T = []
+PC = 0
+S = []
+R = 0
+ZF = False
 
 def loadtape(fn):
   global T
@@ -18,16 +19,20 @@ def loadtape(fn):
   T=nt
   
 def iadd():
-  global S
+  global S, ZF
   o1 = S.pop()
   o2 = S.pop()
-  S.append(o1 + o2)
+  res = o1 + o2
+  S.append(res)
+  ZF = S[-1] == 0
   
 def imul():
-  global S
+  global S, ZF
   o1 = S.pop()
   o2 = S.pop()
-  S.append(o1 * o2)
+  res = o1 * o2
+  S.append(res)
+  ZF = S[-1] == 0
 
 def iput():
   global S, T
@@ -49,7 +54,7 @@ def ieq():
 def jnz():
   global PC, ZF, S
   loc = S.pop()
-  if ZF:
+  if not ZF:
     PC = loc - 1
 
 def jmp():
@@ -58,7 +63,7 @@ def jmp():
   PC = loc - 1
 
 def cycle():
-  global T, PC, S, ZF
+  global T, PC, S, ZF, R
   c = T[PC]
   if c == IPUSH:
     S.append(T[PC + 1])
@@ -69,8 +74,10 @@ def cycle():
     imul()
   elif c == IINC:
     S.append(S.pop() + 1)
+    ZF = S[-1] == 0
   elif c == IDEC:
     S.append(S.pop() - 1)
+    ZF = S[-1] == 0
   elif c == IPRINT:
     print(S.pop())
   elif c == NOOP:
@@ -79,6 +86,8 @@ def cycle():
     print(T)
   elif c == ISTAKDUMP:
     print(S)
+  elif c == IFLAGSDUMP:
+    print('ZF', ZF)
   elif c == IPUT:
     iput()
   elif c == IGET:
@@ -89,6 +98,12 @@ def cycle():
     jnz()
   elif c == JMP:
     jmp()
+  elif c == RSAVE:
+    R = S.pop()
+  elif c == RLOAD:
+    S.append(R)
+  elif c == ZFOFF:
+    ZF = False
   elif c == HALT:
     raise SystemExit
 

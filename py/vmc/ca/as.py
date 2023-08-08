@@ -74,6 +74,14 @@ def assembly(srclns):
       ptr += 3 - 1
     elif car == '@':
       symtab[cdr] = ptr
+    elif car == 'save':
+      il[ptr] = RSAVE
+    elif car == 'load':
+      il[ptr] = RLOAD
+    elif car == 'zfoff':
+      il[ptr] = ZFOFF
+    elif car == 'fdump':
+      il[ptr] = IFLAGSDUMP
     else:
       raise Exception('unknown command: '+car)
     ptr += 1
