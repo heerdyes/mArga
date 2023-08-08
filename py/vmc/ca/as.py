@@ -3,6 +3,7 @@ from sys import argv
 from inst import *
 
 symtab = {}
+dbgf = False
 
 def eattillspace(s):
   sp=0
@@ -88,6 +89,11 @@ def assembly(srclns):
   return il
 
 def savetape(T, fn):
+  if dbgf:
+    print('--- tape ---')
+    print(T)
+    print('--- symtab ---')
+    print(symtab)
   s=''
   for c in T:
     s = s + chr(c)
@@ -104,11 +110,19 @@ def rmcomments(lns):
 
 # flow
 if __name__ == '__main__':
-  if len(argv) != 3:
-    print('usage: python3 as.py <source.as> <output.vmc>')
+  if len(argv) not in [3, 4]:
+    print('usage: python3 as.py [--debug] <source.as> <output.vmc>')
     raise SystemExit
-    
-  src, dst = argv[1], argv[2]
+  
+  # handle cli args
+  opt = ''
+  if len(argv) == 3:  
+    src, dst = argv[1], argv[2]
+  elif len(argv) == 4:
+    opt, src, dst = argv[1], argv[2], argv[3]
+  dbgf = opt == '--debug'
+  
+  # translate to vmc native
   with open(src) as fs:
     lns = [ln.strip() for ln in fs.readlines()]
   savetape(assembly(rmcomments(lns)), dst)
