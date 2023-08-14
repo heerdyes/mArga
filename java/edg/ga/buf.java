@@ -46,13 +46,33 @@ public class buf extends box
     }
   }
   
+  FileReader surefireFileReader()
+  {
+    File f = new File(file);
+    FileReader fr = null;
+    try
+    {
+      if(!f.exists())
+      {
+        f.createNewFile();
+      }
+      fr = new FileReader(f);
+    }
+    catch(IOException ioe)
+    {
+      ioe.printStackTrace();
+    }
+    return fr;
+  }
+  
   void loadbuf()
   {
     if(file == null)
     {
       throw new RuntimeException("file not set!");
     }
-    try(FileReader fr = new FileReader(file))
+    
+    try(FileReader fr = surefireFileReader())
     {
       int n;
       while((n = fr.read()) != -1)
@@ -460,12 +480,28 @@ public class buf extends box
     }
   }
   
+  public void handletab()
+  {
+    if(mode.equals("Normal"))
+    {
+      insch('\t');
+    }
+    else if(mode.equals("Shift"))
+    {
+      System.out.println("[TODO] unimplemented");
+    }
+  }
+  
   public void onkeyup(String kn)
   {
     if(kn.equals("Esc"))
     {
       System.out.println("bye!");
       System.exit(0);
+    }
+    else if(kn.equals("Shift"))
+    {
+      mode="Normal";
     }
   }
 
@@ -489,7 +525,7 @@ public class buf extends box
     }
     else if(kn.equals("Shift"))
     {
-      mode=mode.equals("Normal")?"Shift":"Normal";
+      mode="Shift";
     }
     else if(kn.equals("Caps Lock"))
     {
@@ -547,6 +583,10 @@ public class buf extends box
     {
       // handled by keyup. do nothing here
     }
+    else if(kn.equals("Tab"))
+    {
+      handletab();
+    }
     else if(kn.length()==1)
     {
       if(u.cin(kn.charAt(0),"ABCDEFGHIJKLMNOPQRSTUVWXYZ"))
@@ -594,6 +634,17 @@ public class buf extends box
     {
       // do nothing
     }
+    else if(cc == '\t')
+    {
+      double px = xx;
+      double py = yy - 2;
+      gc.strokeLine(px, py, px + 9, py);
+      gc.strokeLine(px, py, px + 3, py - 2);
+      gc.strokeLine(px, py, px + 3, py + 2);
+      gc.strokeLine(px, py - 5, px + 9, py - 5);
+      gc.strokeLine(px + 9, py - 5, px + 6, py - 7);
+      gc.strokeLine(px + 9, py - 5, px + 6, py - 3);
+    }
     else
     {
       gc.setFill(fg);
@@ -609,7 +660,7 @@ public class buf extends box
   
   void rndrcaret(GraphicsContext gc, double px, double py)
   {
-    gc.setStroke(fg);
+    gc.setStroke(hg);
     gc.strokeLine(px, py + 2, px, py - crtht);
   }
   

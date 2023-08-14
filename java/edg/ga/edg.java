@@ -32,21 +32,10 @@ public class edg extends Application
   protected Canvas c;
   protected Scene s;
   protected String dlevel = "INFO";
-  protected volatile boolean dragging = false;
-  protected double pmouseX = -1.0;
-  protected double pmouseY = -1.0;
-  protected double t = 0.0;
-  protected double dt = 0.05;
-  protected long frameinterval;
   protected int mouseX = 0;
   protected int mouseY = 0;
   double cx = 0;
   double cy = 0;
-  double r = 300;
-  double z = 7;
-  double d = 4;
-  double ouf = 0.125;
-  double inf = 0.125;
   boolean sighalt = false;
   buf g;
   static String file;
@@ -103,12 +92,10 @@ public class edg extends Application
 
   void setup()
   {
-    frameinterval = 40;
     c = new Canvas(WIDTH, HEIGHT);
     gc = c.getGraphicsContext2D();
     cx = WIDTH / 2;
     cy = HEIGHT / 2;
-    dt = 0.075;
     gc.setFill(Color.rgb(0, 0, 0));
     gc.fillRect(0, 0, WIDTH, HEIGHT);
     gc.setStroke(Color.rgb(0, 255, 0));
