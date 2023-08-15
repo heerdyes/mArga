@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+./as.py prg/$1.as bin/$1.vmc
+./vmc.py bin/$1.vmc
+
