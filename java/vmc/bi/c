@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+echo "cleaning bin dir..."
+rm -rf bin

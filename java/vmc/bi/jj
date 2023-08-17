@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+echo "compiling everything..."
+./jc
+echo "recreating deploy directory..."
+rm -rf deploy
+mkdir deploy
+echo "entering bin directory..."
+pushd bin
+echo "building jar..."
+jar cf ../deploy/binmc_v0.1.jar *.class
+echo "returning to current directory..."
+popd
+

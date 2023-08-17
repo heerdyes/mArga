@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# usage ./r <ClassName>
+java -cp bin $1
+

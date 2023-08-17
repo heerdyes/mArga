@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# usage ./cr <ClassName>
+set -euo pipefail
+IFS=$'\n\t'
+
+echo "cleaning bin dir ..."
+rm -rf bin
+mkdir bin
+echo "compiling src/main/java dir ..."
+javac -d bin src/main/java/*.java
+echo "running class $1 ..."
+java -cp bin $1
