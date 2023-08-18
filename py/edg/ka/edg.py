@@ -3,6 +3,7 @@ from tkinter import *
 from typo.z1 import *
 from sys import argv
 import cfg
+import os
 
 debug = True
 
@@ -75,6 +76,9 @@ class Edg(Tk):
       self.cursor += 1
     self.rndrbuf()
   
+  def invokepy(self):
+    os.system("python3 " + self.filename)
+  
   def kbpress(self, e):
     kc = e.keycode
     d(kc)
@@ -86,6 +90,9 @@ class Edg(Tk):
     elif kc==68:
       print('F2: save file')
       self.buf2file()
+    elif kc==71:
+      print('F5: run python file')
+      self.invokepy()
     elif kc==50:
       print('shift')
     elif kc==22:
