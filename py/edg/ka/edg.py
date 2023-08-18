@@ -131,7 +131,7 @@ class Edg(Tk):
       pxy.append(cxy[0] + round(pts[i] * k))
       pxy.append(cxy[1] + round(pts[i+1] * k))
       i += 2
-    self.cnv.create_line(*pxy, fill=cfg.foreground)
+    self.cnv.create_line(*pxy, fill=cfg.foreground, width=cfg.lnwidth)
   
   def drawcursor(self, cxy, k):
     self.cnv.create_line(cxy[0], cxy[1], cxy[0], cxy[1]+k, fill=cfg.cursorcolor)
