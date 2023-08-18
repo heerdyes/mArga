@@ -4,6 +4,12 @@ from typo.z1 import *
 from sys import argv
 import cfg
 
+debug = True
+
+def d(s):
+  if debug:
+    print(s)
+
 
 class Edg(Tk):
   def __init__(self, fn):
@@ -71,7 +77,7 @@ class Edg(Tk):
   
   def kbpress(self, e):
     kc = e.keycode
-    print(kc)
+    d(kc)
     if kc==9:
       print(cfg.goodbyemsg)
       raise SystemExit()
