@@ -4,27 +4,6 @@ public class vmc
   static char r1, r2, r3, r4;
   static char pc;
   
-  static void tinit(int n)
-  {
-    tape = new char[n];
-    for(int i = 0; i < n; i++)
-    {
-      tape[i] = (char)i;
-    }
-  }
-  
-  static void tdump()
-  {
-    for(int i = 0; i < tape.length; i++)
-    {
-      System.out.printf("%03d  ", (int)tape[i]);
-      if((i+1) % 8 == 0)
-      {
-        System.out.println();
-      }
-    }
-  }
-  
   static void regdump()
   {
     System.out.println("--- registers ---");
@@ -57,8 +36,8 @@ public class vmc
 
   public static void main(String... args)
   {
-    tinit(24);
-    tdump();
+    tape = u.tinit(24, '\0');
+    u.tdump(tape, 4);
   }
 }
 
