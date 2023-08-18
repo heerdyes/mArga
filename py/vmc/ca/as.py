@@ -21,6 +21,15 @@ def prochdr(hdln):
   il = [0] * memsz
   return il
 
+def jnz():
+  if cdr not in symtab:
+    raise Exception('no such label: '+cdr)
+  loc = symtab[cdr]
+  il[ptr] = IPUSH
+  il[ptr + 1] = loc
+  il[ptr + 2] = JNZ
+  ptr += 3 - 1
+
 def assembly(srclns):
   global symtab
   il = prochdr(srclns[0])
