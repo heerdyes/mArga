@@ -13,10 +13,14 @@ Thread rt, rerrt;
 Ts term;
 Cli con;
 MQ mq;
+String prompt = "-> ";
 
 void initsh(String... args) {
   try {
     ProcessBuilder pb = new ProcessBuilder(args);
+    Map<String, String> env = pb.environment();
+    env.put("mArga", "teg/ka");
+    env.put("EDITOR", "gedit");
     shproc = pb.start();
     q = new Sndr(shproc.getOutputStream());
     r = new Rcvr("stdout", shproc.getInputStream());
@@ -31,16 +35,20 @@ void initsh(String... args) {
   }
 }
 
+void preinit() {
+  mq = new MQ();
+}
+
 void initterm() {
   term = new Ts(nlns, tx, ty, width-(2*tx), height-conht-2, trn, blk);
-  con = new Cli("> ", tx, height-conht-2, width-(2*tx), conht, trn, blk);
-  mq = new MQ();
+  con = new Cli(prompt, tx, height-conht-2, width-(2*tx), conht, trn, blk);
 }
 
 void setup() {
   size(1280, 720);
   background(240);
   textFont(createFont("OCRA", 14));
+  preinit();
   initsh("/usr/bin/sh");
   initterm();
   background(blk);

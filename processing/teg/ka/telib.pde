@@ -71,10 +71,8 @@ class Rcvr implements Runnable {
     catch (IOException ioe) {
       d("\n[IOE] " + ioe.getMessage());
     }
-    finally {
-      politelyclose();
-      d("rcvr:"+name+" hanged up.");
-    }
+    politelyclose();
+    d("rcvr:"+name+" hanged up.");
   }
 }
 
