@@ -18,6 +18,8 @@ upon any language, create
   - file system (fs[c|g|e|l])
   - database (db[c|g|e|l])
   - cad (cad[c|g|e|l])
+  - mArga installer (mi[c|g|e|l])
+    - utility to setup the mArga software suite 😁
 
 aspects
   - console (basic)
