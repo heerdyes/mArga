@@ -16,6 +16,7 @@ public class edg extends JFrame implements DocumentListener, KeyListener
   private boolean pristine = true;
   private Font fnt = null;
   private Font ocra = null;
+  private Color fg, bg, cg;
   
   private void init()
   {
@@ -26,11 +27,17 @@ public class edg extends JFrame implements DocumentListener, KeyListener
     ta.setRows(30);
     grepocra();
     ta.setFont(ocra.deriveFont(22f));
+    ta.setForeground(fg);
+    ta.setBackground(bg);
+    ta.setCaretColor(cg);
     
     sp = new JScrollPane(ta);
     
-    stat = new JLabel("ready");
+    stat = new JLabel("-> ready");
     stat.setFont(ocra.deriveFont(14f));
+    stat.setOpaque(true);
+    stat.setForeground(fg);
+    stat.setBackground(bg);
     
     getContentPane().setLayout(new BorderLayout());
     add(sp, BorderLayout.CENTER);
@@ -38,9 +45,49 @@ public class edg extends JFrame implements DocumentListener, KeyListener
     pack();
   }
   
+  private void loadcfg()
+  {
+    try(BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("edg.cfg"))))
+    {
+      String ln = br.readLine();
+      while(ln != null)
+      {
+        String[] parts = ln.split(" ");
+        if("fg".equals(parts[0]))
+        {
+          int r = Integer.parseInt(parts[1]);
+          int g = Integer.parseInt(parts[2]);
+          int b = Integer.parseInt(parts[3]);
+          fg = new Color(r, g, b);
+        }
+        else if("bg".equals(parts[0]))
+        {
+          int r = Integer.parseInt(parts[1]);
+          int g = Integer.parseInt(parts[2]);
+          int b = Integer.parseInt(parts[3]);
+          bg = new Color(r, g, b);
+        }
+        else if("cur".equals(parts[0]))
+        {
+          int r = Integer.parseInt(parts[1]);
+          int g = Integer.parseInt(parts[2]);
+          int b = Integer.parseInt(parts[3]);
+          cg = new Color(r, g, b);
+        }
+        ln = br.readLine();
+      }
+    }
+    catch(IOException ioe)
+    {
+      ioe.printStackTrace();
+      System.exit(0);
+    }
+  }
+  
   public edg()
   {
     super("edg");
+    loadcfg();
     init();
     ta.getDocument().addDocumentListener(this);
     ta.addKeyListener(this);
@@ -92,7 +139,7 @@ public class edg extends JFrame implements DocumentListener, KeyListener
         ta.setText(sb.toString());
       }
       setTitle(cpath);
-      stat.setText("loaded file: " + cpath);
+      stat.setText("-> loaded file: " + cpath);
       pristine = true;
     }
     catch (IOException ioe)
@@ -107,7 +154,7 @@ public class edg extends JFrame implements DocumentListener, KeyListener
     {
       pw.print(ta.getText());
       pw.flush();
-      stat.setText("saved to file: " + file.getCanonicalPath());
+      stat.setText("-> saved to file: " + file.getCanonicalPath());
       pristine = true;
     }
     catch (IOException ioe)
@@ -122,7 +169,7 @@ public class edg extends JFrame implements DocumentListener, KeyListener
     {
       pw.print(ta.getText());
       pw.flush();
-      stat.setText("saved to file: " + f.getCanonicalPath());
+      stat.setText("-> saved to file: " + f.getCanonicalPath());
       file = f;
       pristine = true;
     }
@@ -147,7 +194,7 @@ public class edg extends JFrame implements DocumentListener, KeyListener
       }
       else
       {
-        stat.setText("file select cancelled!");
+        stat.setText("!! file select cancelled !!");
       }
     }
     catch (IOException ioe)
@@ -172,7 +219,7 @@ public class edg extends JFrame implements DocumentListener, KeyListener
       }
       else
       {
-        stat.setText("file select cancelled!");
+        stat.setText("!! file select cancelled !!");
       }
     }
     catch (IOException ioe)
@@ -203,7 +250,7 @@ public class edg extends JFrame implements DocumentListener, KeyListener
   {
     if(pristine)
     {
-      stat.setText("buffer modified");
+      stat.setText("-> buffer modified");
       pristine = false;
     }
   }
@@ -233,7 +280,7 @@ public class edg extends JFrame implements DocumentListener, KeyListener
     {
       if(kc == KeyEvent.VK_S)
       {
-        stat.setText("saving to file...");
+        stat.setText("-> saving to file...");
         if(file == null)
         {
           savefile(selectfile2save());
@@ -245,7 +292,7 @@ public class edg extends JFrame implements DocumentListener, KeyListener
       }
       else if(kc == KeyEvent.VK_O)
       {
-        stat.setText("loading file...");
+        stat.setText("-> loading file...");
         loadfile(selectfile2open());
       }
     }
