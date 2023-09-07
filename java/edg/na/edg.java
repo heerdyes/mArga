@@ -165,6 +165,7 @@ public class edg extends JFrame implements DocumentListener, KeyListener
   
   private void savefile(File f)
   {
+    if(f == null) return;
     try(PrintWriter pw = new PrintWriter(f))
     {
       pw.print(ta.getText());
