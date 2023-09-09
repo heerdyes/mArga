@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import javax.tools.*;
 
 public class edg extends JFrame implements DocumentListener, KeyListener
 {
@@ -137,7 +138,7 @@ public class edg extends JFrame implements DocumentListener, KeyListener
     this();
     file = new File(fn);
     mkifnonexistent(file);
-    loadfile(file);
+    loadfile();
   }
   
   // [fsops
@@ -156,7 +157,7 @@ public class edg extends JFrame implements DocumentListener, KeyListener
     }
   }
   
-  private void loadfile(File f)
+  private void loadfile()
   {
     try(InputStreamReader isr = new InputStreamReader(new FileInputStream(file)))
     {
@@ -225,6 +226,10 @@ public class edg extends JFrame implements DocumentListener, KeyListener
     try
     {
       JFileChooser fc = new JFileChooser();
+      if(file != null)
+      {
+        fc.setCurrentDirectory(file.getAbsoluteFile().getParentFile());
+      }
       int option = fc.showSaveDialog(this);
       if(option == JFileChooser.APPROVE_OPTION)
       {
@@ -250,6 +255,10 @@ public class edg extends JFrame implements DocumentListener, KeyListener
     try
     {
       JFileChooser fc = new JFileChooser();
+      if(file != null)
+      {
+        fc.setCurrentDirectory(file.getAbsoluteFile().getParentFile());
+      }
       int option = fc.showOpenDialog(this);
       if(option == JFileChooser.APPROVE_OPTION)
       {
@@ -294,9 +303,81 @@ public class edg extends JFrame implements DocumentListener, KeyListener
     }
   }
   
+  void jrun(String clsnm)
+  {
+    try
+    {
+      ProcessBuilder pb = new ProcessBuilder("java", clsnm);
+      pb.directory(file.getAbsoluteFile().getParentFile());
+      pb.inheritIO();
+      Process p = pb.start();
+      int result = p.waitFor();
+      String msg = "[jrun] process exited with status: " + result;
+      stat.setText(msg);
+    }
+    catch (InterruptedException e)
+    {
+      e.printStackTrace();
+    }
+    catch (IOException ioe)
+    {
+      ioe.printStackTrace();
+    }
+  }
+  
+  void dosave()
+  {
+    stat.setText("-> saving to file...");
+    if(file == null)
+    {
+      savefile(selectfile2save());
+    }
+    else
+    {
+      savefile();
+    }
+  }
+  
+  void doopen()
+  {
+    stat.setText("-> loading file...");
+    File nf = selectfile2open();
+    if(nf != null)
+    {
+      file = nf;
+    }
+    loadfile();
+  }
+  
+  void dojcompile()
+  {
+    stat.setText("-> compiling this java file...");
+    String fn = file.getName();
+    u.d("[javac file='"+fn+"'");
+    JavaCompiler jc = ToolProvider.getSystemJavaCompiler();
+    int res = jc.run(null, System.out, System.err, "-sourcepath", file.getAbsoluteFile().getParent(), fn);
+    stat.setText(res == 0 ? "[javac] compilation success!" : "[javac] compilation failed! check console.");
+    u.d("]");
+  }
+  
+  void dojrun()
+  {
+    stat.setText("-> running this java file...");
+    String clnm = file.getName().split("\\.")[0];
+    u.d("[java class='" + clnm + "'");
+    jrun(clnm);
+    u.d("]");
+  }
+  
+  void doquit()
+  {
+    stat.setText("!! sayonara !!");
+    u.d("escaping...");
+    System.exit(0);
+  }
+  
   // [eventlisteners
-  public void changedUpdate(DocumentEvent ev)
-  {}
+  public void changedUpdate(DocumentEvent ev) {}
   
   public void removeUpdate(DocumentEvent ev)
   {
@@ -310,7 +391,7 @@ public class edg extends JFrame implements DocumentListener, KeyListener
   
   public void keyPressed(KeyEvent ke) {}
   
-  public void keyReleased(KeyEvent ke)
+  void ta_keyup(KeyEvent ke)
   {
     int kc = ke.getKeyCode();
     int offmask = InputEvent.SHIFT_DOWN_MASK | InputEvent.ALT_DOWN_MASK;
@@ -319,27 +400,34 @@ public class edg extends JFrame implements DocumentListener, KeyListener
     {
       if(kc == KeyEvent.VK_S)
       {
-        stat.setText("-> saving to file...");
-        if(file == null)
-        {
-          savefile(selectfile2save());
-        }
-        else
-        {
-          savefile();
-        }
+        dosave();
       }
       else if(kc == KeyEvent.VK_O)
       {
-        stat.setText("-> loading file...");
-        loadfile(selectfile2open());
+        doopen();
       }
+      else if(kc == KeyEvent.VK_BACK_QUOTE)
+      {
+        stat.setText("[TODO] -> toggling terminal emulator...");
+      }
+    }
+    else if(kc == KeyEvent.VK_F9)
+    {
+      dojcompile();
+    }
+    else if(kc == KeyEvent.VK_F5)
+    {
+      dojrun();
     }
     else if(kc == KeyEvent.VK_ESCAPE)
     {
-      System.out.println("escaping...");
-      System.exit(0);
+      doquit();
     }
+  }
+  
+  public void keyReleased(KeyEvent ke)
+  {
+    ta_keyup(ke);
   }
   
   public void keyTyped(KeyEvent ke)
