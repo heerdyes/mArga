@@ -18,13 +18,14 @@ public class edg extends JFrame implements DocumentListener, KeyListener
   private Font ocra = null;
   private Color fg, bg, cg;
   
-  private void init()
+  private void setupta()
   {
     ta = new JTextArea();
     setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     ta.setColumns(80);
     ta.setLineWrap(true);
     ta.setRows(30);
+    
     grepocra();
     ta.setFont(ocra.deriveFont(22f));
     ta.setForeground(fg);
@@ -32,16 +33,26 @@ public class edg extends JFrame implements DocumentListener, KeyListener
     ta.setCaretColor(cg);
     
     sp = new JScrollPane(ta);
-    
+  }
+  
+  private void setupstat()
+  {
     stat = new JLabel("-> ready");
     stat.setFont(ocra.deriveFont(14f));
     stat.setOpaque(true);
     stat.setForeground(fg);
     stat.setBackground(bg);
+  }
+  
+  private void init()
+  {
+    setupta();
+    setupstat();
     
     getContentPane().setLayout(new BorderLayout());
     add(sp, BorderLayout.CENTER);
     add(stat, BorderLayout.SOUTH);
+    
     pack();
   }
   
@@ -311,6 +322,23 @@ public class edg extends JFrame implements DocumentListener, KeyListener
   public static void main(String args[])
   {
     SwingUtilities.invokeLater(new edgw(args));
+  }
+}
+
+class edgw implements Runnable
+{
+  String[] args;
+  
+  edgw(String[] _args)
+  {
+    args = _args;
+  }
+  
+  public void run()
+  {
+    UIManager.put("swing.boldMetal", Boolean.FALSE);
+    edg e = args.length == 0 ? new edg() : new edg(args[0]);
+    e.setVisible(true);
   }
 }
 
