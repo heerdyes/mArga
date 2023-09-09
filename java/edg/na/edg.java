@@ -14,20 +14,26 @@ public class edg extends JFrame implements DocumentListener, KeyListener
   private JTextArea ta;
   private File file = null;
   private boolean pristine = true;
-  private Font fnt = null;
-  private Font ocra = null;
+  private Font tafont = null;
+  private Font sbfont = null;
   private Color fg, bg, cg;
+  private int rr = 8;
+  private int cc = 32;
+  private float tafsz = 22f;
+  private float sbfsz = 14f;
+  private String taff = "OCRA";
+  private String sbff = "Courier";
   
   private void setupta()
   {
     ta = new JTextArea();
     setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-    ta.setColumns(80);
+    ta.setColumns(cc);
     ta.setLineWrap(true);
-    ta.setRows(30);
+    ta.setRows(rr);
     
-    grepocra();
-    ta.setFont(ocra.deriveFont(22f));
+    tafont = grepfamily(taff);
+    ta.setFont(tafont.deriveFont(tafsz));
     ta.setForeground(fg);
     ta.setBackground(bg);
     ta.setCaretColor(cg);
@@ -38,7 +44,8 @@ public class edg extends JFrame implements DocumentListener, KeyListener
   private void setupstat()
   {
     stat = new JLabel("-> ready");
-    stat.setFont(ocra.deriveFont(14f));
+    sbfont = grepfamily(sbff);
+    stat.setFont(sbfont.deriveFont(sbfsz));
     stat.setOpaque(true);
     stat.setForeground(fg);
     stat.setBackground(bg);
@@ -56,6 +63,7 @@ public class edg extends JFrame implements DocumentListener, KeyListener
     pack();
   }
   
+  // call loadcfg before init
   private void loadcfg()
   {
     try(BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("edg.cfg"))))
@@ -63,27 +71,47 @@ public class edg extends JFrame implements DocumentListener, KeyListener
       String ln = br.readLine();
       while(ln != null)
       {
-        String[] parts = ln.split(" ");
-        if("fg".equals(parts[0]))
+        String[] cadr = u.eattillspace(ln);
+        String car = cadr[0], cdr = cadr[1];
+        if("fg".equals(car))
         {
-          int r = Integer.parseInt(parts[1]);
-          int g = Integer.parseInt(parts[2]);
-          int b = Integer.parseInt(parts[3]);
-          fg = new Color(r, g, b);
+          fg = u.parsecolor(cdr);
         }
-        else if("bg".equals(parts[0]))
+        else if("bg".equals(car))
         {
-          int r = Integer.parseInt(parts[1]);
-          int g = Integer.parseInt(parts[2]);
-          int b = Integer.parseInt(parts[3]);
-          bg = new Color(r, g, b);
+          bg = u.parsecolor(cdr);
         }
-        else if("cur".equals(parts[0]))
+        else if("cur".equals(car))
         {
-          int r = Integer.parseInt(parts[1]);
-          int g = Integer.parseInt(parts[2]);
-          int b = Integer.parseInt(parts[3]);
-          cg = new Color(r, g, b);
+          cg = u.parsecolor(cdr);
+        }
+        else if("rows".equals(car))
+        {
+          rr = Integer.parseInt(cdr);
+        }
+        else if("cols".equals(car))
+        {
+          cc = Integer.parseInt(cdr);
+        }
+        else if("tafsz".equals(car))
+        {
+          tafsz = Float.parseFloat(cdr);
+        }
+        else if("sbfsz".equals(car))
+        {
+          sbfsz = Float.parseFloat(cdr);
+        }
+        else if("sbff".equals(car))
+        {
+          sbff = cdr;
+        }
+        else if("taff".equals(car))
+        {
+          taff = cdr;
+        }
+        else
+        {
+          u.d("unknown command: " + car);
         }
         ln = br.readLine();
       }
@@ -243,18 +271,17 @@ public class edg extends JFrame implements DocumentListener, KeyListener
   // ]
   
   // [styleops
-  private void grepocra()
+  private Font grepfamily(String ff)
   {
     Font[] fnts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
     for(Font f : fnts)
     {
-      if("OCRA".equals(f.getFamily()))
+      if(ff.equals(f.getFamily()))
       {
-        ocra = f;
-        return;
+        return f;
       }
     }
-    throw new RuntimeException("no ocra font found!");
+    throw new RuntimeException("no "+ff+" font family found!");
   }
   // ]
   
@@ -336,9 +363,41 @@ class edgw implements Runnable
   
   public void run()
   {
-    UIManager.put("swing.boldMetal", Boolean.FALSE);
     edg e = args.length == 0 ? new edg() : new edg(args[0]);
     e.setVisible(true);
+  }
+}
+
+class u
+{
+  static String[] eattillspace(String s)
+  {
+    return eattillchar(s, ' ');
+  }
+  
+  static String[] eattillchar(String s, char c)
+  {
+    int pos = s.indexOf(c);
+    if(pos == -1)
+    {
+      return new String[] {s, ""};
+    }
+    return new String[] {s.substring(0, pos), s.substring(pos + 1)};
+  }
+  
+  static Color parsecolor(String rgb)
+  {
+    String[] r_gb = eattillspace(rgb);
+    int r = Integer.parseInt(r_gb[0]);
+    String[] g_b = eattillspace(r_gb[1]);
+    int g = Integer.parseInt(g_b[0]);
+    int b = Integer.parseInt(g_b[1]);
+    return new Color(r, g, b);
+  }
+  
+  static void d(String msg)
+  {
+    System.out.println(msg);
   }
 }
 
