@@ -13,8 +13,6 @@ public class edg extends JFrame implements DocumentListener, KeyListener
   private JLabel stat;
   private JScrollPane sp;
   private JTextArea ta;
-  private File file = null;
-  private boolean pristine = true;
   private Font tafont = null;
   private Font sbfont = null;
   private Color fg, bg, cg;
@@ -24,6 +22,10 @@ public class edg extends JFrame implements DocumentListener, KeyListener
   private float sbfsz = 14f;
   private String taff = "OCRA";
   private String sbff = "Courier";
+  private ArrayList<buf> bufs;
+  private int curbuf = -1;
+  private int ctr = 0;
+  private File pwd;
   
   private void setupta()
   {
@@ -52,8 +54,18 @@ public class edg extends JFrame implements DocumentListener, KeyListener
     stat.setBackground(bg);
   }
   
+  private String genid()
+  {
+    return String.format("b_%02d", ctr++);
+  }
+  
   private void init()
   {
+    pwd = new File(".");
+    bufs = new ArrayList<>();
+    bufs.add(new buf(null, genid()));
+    curbuf = 0;
+
     setupta();
     setupstat();
     
@@ -133,151 +145,21 @@ public class edg extends JFrame implements DocumentListener, KeyListener
     ta.addKeyListener(this);
   }
   
+  void ta_populate()
+  {
+    buf cb = bufs.get(curbuf);
+    ta.setText(cb.data);
+    stat.setText(String.format("-> buf[%s] <%s>", cb.id, cb.file==null?"null":cb.file.getName()));
+  }
+  
   public edg(String fn)
   {
     this();
-    file = new File(fn);
-    mkifnonexistent(file);
-    loadfile();
+    buf b = bufs.get(curbuf);
+    b.setf(fn);
+    b.load();
+    ta_populate();
   }
-  
-  // [fsops
-  private void mkifnonexistent(File x)
-  {
-    if(!x.exists())
-    {
-      try
-      {
-        x.createNewFile();
-      }
-      catch (IOException ioe)
-      {
-        ioe.printStackTrace();
-      }
-    }
-  }
-  
-  private void loadfile()
-  {
-    try(InputStreamReader isr = new InputStreamReader(new FileInputStream(file)))
-    {
-      String cpath = file.getCanonicalPath();
-      if(file.length() == 0)
-      {
-        ta.setText("");
-      }
-      else
-      {
-        StringBuffer sb = new StringBuffer();
-        int x = isr.read();
-        while(x != -1)
-        {
-          char c = (char) x;
-          sb.append(c);
-          x = isr.read();
-        }
-        ta.setText(sb.toString());
-      }
-      setTitle(cpath);
-      stat.setText("-> loaded file: " + cpath);
-      pristine = true;
-    }
-    catch (IOException ioe)
-    {
-      ioe.printStackTrace();
-    }
-  }
-  
-  private void savefile()
-  {
-    try(PrintWriter pw = new PrintWriter(file))
-    {
-      pw.print(ta.getText());
-      pw.flush();
-      stat.setText("-> saved to file: " + file.getCanonicalPath());
-      pristine = true;
-    }
-    catch (IOException ioe)
-    {
-      ioe.printStackTrace();
-    }
-  }
-  
-  private void savefile(File f)
-  {
-    if(f == null) return;
-    try(PrintWriter pw = new PrintWriter(f))
-    {
-      pw.print(ta.getText());
-      pw.flush();
-      stat.setText("-> saved to file: " + f.getCanonicalPath());
-      file = f;
-      pristine = true;
-    }
-    catch (IOException ioe)
-    {
-      ioe.printStackTrace();
-    }
-  }
-  
-  private File selectfile2save()
-  {
-    File sf = null;
-    try
-    {
-      JFileChooser fc = new JFileChooser();
-      if(file != null)
-      {
-        fc.setCurrentDirectory(file.getAbsoluteFile().getParentFile());
-      }
-      int option = fc.showSaveDialog(this);
-      if(option == JFileChooser.APPROVE_OPTION)
-      {
-        sf = fc.getSelectedFile();
-        String cpath = sf.getCanonicalPath();
-        setTitle("| " + cpath + " |");
-      }
-      else
-      {
-        stat.setText("!! file select cancelled !!");
-      }
-    }
-    catch (IOException ioe)
-    {
-      ioe.printStackTrace();
-    }
-    return sf;
-  }
-  
-  private File selectfile2open()
-  {
-    File sf = null;
-    try
-    {
-      JFileChooser fc = new JFileChooser();
-      if(file != null)
-      {
-        fc.setCurrentDirectory(file.getAbsoluteFile().getParentFile());
-      }
-      int option = fc.showOpenDialog(this);
-      if(option == JFileChooser.APPROVE_OPTION)
-      {
-        sf = fc.getSelectedFile();
-        String cpath = sf.getCanonicalPath();
-        setTitle("| " + cpath + " |");
-      }
-      else
-      {
-        stat.setText("!! file select cancelled !!");
-      }
-    }
-    catch (IOException ioe)
-    {
-      ioe.printStackTrace();
-    }
-    return sf;
-  }
-  // ]
   
   // [styleops
   private Font grepfamily(String ff)
@@ -296,11 +178,13 @@ public class edg extends JFrame implements DocumentListener, KeyListener
   
   private void dirtybuffer()
   {
-    if(pristine)
+    buf cb = bufs.get(curbuf);
+    if(cb.pristine)
     {
       stat.setText("-> buffer modified");
-      pristine = false;
+      cb.pristine = false;
     }
+    cb.setdata(ta.getText());
   }
   
   void jrun(String clsnm)
@@ -308,7 +192,7 @@ public class edg extends JFrame implements DocumentListener, KeyListener
     try
     {
       ProcessBuilder pb = new ProcessBuilder("java", clsnm);
-      pb.directory(file.getAbsoluteFile().getParentFile());
+      pb.directory(bufs.get(curbuf).file.getAbsoluteFile().getParentFile());
       pb.inheritIO();
       Process p = pb.start();
       int result = p.waitFor();
@@ -328,30 +212,51 @@ public class edg extends JFrame implements DocumentListener, KeyListener
   void dosave()
   {
     stat.setText("-> saving to file...");
-    if(file == null)
+    buf cb = bufs.get(curbuf);
+    if(cb.file == null)
     {
-      savefile(selectfile2save());
+      JFileChooser fc = new JFileChooser();
+      fc.setCurrentDirectory(pwd);
+      int option = fc.showSaveDialog(this);
+      if(option == JFileChooser.APPROVE_OPTION)
+      {
+        cb.setf(fc.getSelectedFile());
+      }
+      else
+      {
+        stat.setText("!! aborting save !!");
+        return;
+      }
     }
-    else
-    {
-      savefile();
-    }
+    cb.setdata(ta.getText());
+    cb.save();
+    stat.setText("-> saved " + cb.file.getName());
   }
   
   void doopen()
   {
     stat.setText("-> loading file...");
-    File nf = selectfile2open();
-    if(nf != null)
+    buf cb = bufs.get(curbuf);
+    JFileChooser fc = new JFileChooser();
+    fc.setCurrentDirectory(pwd);
+    int option = fc.showOpenDialog(this);
+    if(option == JFileChooser.APPROVE_OPTION)
     {
-      file = nf;
+      cb.setf(fc.getSelectedFile());
+      cb.load();
+      ta.setText(cb.data);
+      stat.setText("-> loaded " + cb.file.getName());
     }
-    loadfile();
+    else
+    {
+      stat.setText("-> open action cancelled!");
+    }
   }
   
   void dojcompile()
   {
     stat.setText("-> compiling this java file...");
+    File file = bufs.get(curbuf).file;
     String fn = file.getName();
     u.d("[javac file='"+fn+"'");
     JavaCompiler jc = ToolProvider.getSystemJavaCompiler();
@@ -363,6 +268,7 @@ public class edg extends JFrame implements DocumentListener, KeyListener
   void dojrun()
   {
     stat.setText("-> running this java file...");
+    File file = bufs.get(curbuf).file;
     String clnm = file.getName().split("\\.")[0];
     u.d("[java class='" + clnm + "'");
     jrun(clnm);
@@ -374,6 +280,56 @@ public class edg extends JFrame implements DocumentListener, KeyListener
     stat.setText("!! sayonara !!");
     u.d("escaping...");
     System.exit(0);
+  }
+  
+  void nextbuf()
+  {
+    if(bufs.size() == 1)
+    {
+      stat.setText("[warn] only 1 buffer exists.");
+    }
+    else
+    {
+      stat.setText("-> switching to next buffer");
+      curbuf = (curbuf + 1) % bufs.size();
+      ta_populate();
+    }
+  }
+  
+  void prevbuf()
+  {
+    if(bufs.size() == 1)
+    {
+      stat.setText("[warn] only 1 buffer exists.");
+    }
+    else
+    {
+      stat.setText("-> switching to previous buffer");
+      curbuf = curbuf == 0 ? bufs.size() - 1 : curbuf - 1;
+      ta_populate();
+    }
+  }
+
+  void rmbuf()
+  {
+    if(bufs.size() <= 0)
+    {
+      stat.setText("!! no more bufs to remove !!");
+    }
+    else if(bufs.size() == 1)
+    {
+      bufs.remove(0);
+      bufs.add(new buf(null, genid()));
+      curbuf = 0;
+      ta_populate();
+    }
+    else
+    {
+      int _old = curbuf;
+      curbuf = 0;
+      bufs.remove(_old);
+      ta_populate();
+    }
   }
   
   // [eventlisteners
@@ -398,31 +354,26 @@ public class edg extends JFrame implements DocumentListener, KeyListener
     int onmask = InputEvent.CTRL_DOWN_MASK;
     if((ke.getModifiersEx() & (onmask | offmask)) == onmask)
     {
-      if(kc == KeyEvent.VK_S)
-      {
-        dosave();
-      }
-      else if(kc == KeyEvent.VK_O)
-      {
-        doopen();
-      }
+      if(kc == KeyEvent.VK_S) { dosave(); }
+      else if(kc == KeyEvent.VK_O) { doopen(); }
       else if(kc == KeyEvent.VK_BACK_QUOTE)
       {
         stat.setText("[TODO] -> toggling terminal emulator...");
       }
+      else if(kc == KeyEvent.VK_T)
+      {
+        buf nb = new buf(null, genid());
+        bufs.add(nb);
+        curbuf = bufs.size() - 1;
+        ta_populate();
+      }
+      else if(kc == KeyEvent.VK_W) { rmbuf(); }
+      else if(kc == KeyEvent.VK_PAGE_DOWN) { nextbuf(); }
+      else if(kc == KeyEvent.VK_PAGE_UP) { prevbuf(); }
     }
-    else if(kc == KeyEvent.VK_F9)
-    {
-      dojcompile();
-    }
-    else if(kc == KeyEvent.VK_F5)
-    {
-      dojrun();
-    }
-    else if(kc == KeyEvent.VK_ESCAPE)
-    {
-      doquit();
-    }
+    else if(kc == KeyEvent.VK_F9) { dojcompile(); }
+    else if(kc == KeyEvent.VK_F5) { dojrun(); }
+    else if(kc == KeyEvent.VK_ESCAPE) { doquit(); }
   }
   
   public void keyReleased(KeyEvent ke)
@@ -456,6 +407,43 @@ class edgw implements Runnable
   }
 }
 
+class buf
+{
+  File file;
+  String id;
+  String data;
+  boolean pristine = true;
+
+  buf(File f, String s)
+  {
+    file = f;
+    id = s;
+    data = "";
+  }
+  
+  public String toString()
+  {
+    return String.format("[buf [id '%s'] [file '%s'] [data '%s']]", id, file==null?"null":file.getName(), data);
+  }
+  
+  void load()
+  {
+    data = fs.cat(file);
+    pristine = true;
+  }
+
+  void setf(String fn) { file = new File(fn); }
+  void setf(File f) { file = f; }
+
+  void save()
+  {
+    fs.save(file, data);
+    pristine = true;
+  }
+
+  void setdata(String content) { data = content; }
+}
+
 class u
 {
   static String[] eattillspace(String s)
@@ -486,6 +474,74 @@ class u
   static void d(String msg)
   {
     System.out.println(msg);
+  }
+  
+  static void d(ArrayList<buf> bs)
+  {
+    u.d("[buflist");
+    for(buf b : bs)
+    {
+      d("  " + b.toString());
+    }
+    u.d("]");
+  }
+}
+
+class fs
+{
+  static String cat(File f)
+  {
+    mkifnonexistent(f);
+    try(InputStreamReader isr = new InputStreamReader(new FileInputStream(f)))
+    {
+      String cpath = f.getCanonicalPath();
+      if(f.length() == 0)
+      {
+        return "";
+      }
+      StringBuffer sb = new StringBuffer();
+      int x = isr.read();
+      while(x != -1)
+      {
+        char c = (char) x;
+        sb.append(c);
+        x = isr.read();
+      }
+      return sb.toString();
+    }
+    catch (IOException ioe)
+    {
+      ioe.printStackTrace();
+    }
+    return "";
+  }
+  
+  static void save(File f, String data)
+  {
+    try(PrintWriter pw = new PrintWriter(f))
+    {
+      pw.print(data);
+      pw.flush();
+    }
+    catch (IOException ioe)
+    {
+      ioe.printStackTrace();
+    }
+  }
+  
+  static void mkifnonexistent(File x)
+  {
+    if(!x.exists())
+    {
+      try
+      {
+        x.createNewFile();
+      }
+      catch (IOException ioe)
+      {
+        ioe.printStackTrace();
+      }
+    }
   }
 }
 
