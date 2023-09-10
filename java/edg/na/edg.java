@@ -13,7 +13,6 @@ public class edg extends JFrame implements DocumentListener, KeyListener
   private JLabel stat;
   private JScrollPane sp;
   private JTextArea ta;
-  private boolean pristine = true;
   private Font tafont = null;
   private Font sbfont = null;
   private Color fg, bg, cg;
@@ -179,12 +178,13 @@ public class edg extends JFrame implements DocumentListener, KeyListener
   
   private void dirtybuffer()
   {
-    if(pristine)
+    buf cb = bufs.get(curbuf);
+    if(cb.pristine)
     {
       stat.setText("-> buffer modified");
-      pristine = false;
+      cb.pristine = false;
     }
-    bufs.get(curbuf).data = ta.getText();
+    cb.setdata(ta.getText());
   }
   
   void jrun(String clsnm)
@@ -309,6 +309,28 @@ public class edg extends JFrame implements DocumentListener, KeyListener
       ta_populate();
     }
   }
+
+  void rmbuf()
+  {
+    if(bufs.size() <= 0)
+    {
+      stat.setText("!! no more bufs to remove !!");
+    }
+    else if(bufs.size() == 1)
+    {
+      bufs.remove(0);
+      bufs.add(new buf(null, genid()));
+      curbuf = 0;
+      ta_populate();
+    }
+    else
+    {
+      int _old = curbuf;
+      curbuf = 0;
+      bufs.remove(_old);
+      ta_populate();
+    }
+  }
   
   // [eventlisteners
   public void changedUpdate(DocumentEvent ev) {}
@@ -345,6 +367,7 @@ public class edg extends JFrame implements DocumentListener, KeyListener
         curbuf = bufs.size() - 1;
         ta_populate();
       }
+      else if(kc == KeyEvent.VK_W) { rmbuf(); }
       else if(kc == KeyEvent.VK_PAGE_DOWN) { nextbuf(); }
       else if(kc == KeyEvent.VK_PAGE_UP) { prevbuf(); }
     }
@@ -389,6 +412,7 @@ class buf
   File file;
   String id;
   String data;
+  boolean pristine = true;
 
   buf(File f, String s)
   {
@@ -402,10 +426,21 @@ class buf
     return String.format("[buf [id '%s'] [file '%s'] [data '%s']]", id, file==null?"null":file.getName(), data);
   }
   
-  void load() { data = fs.cat(file); }
+  void load()
+  {
+    data = fs.cat(file);
+    pristine = true;
+  }
+
   void setf(String fn) { file = new File(fn); }
   void setf(File f) { file = f; }
-  void save() { fs.save(file, data); }
+
+  void save()
+  {
+    fs.save(file, data);
+    pristine = true;
+  }
+
   void setdata(String content) { data = content; }
 }
 
