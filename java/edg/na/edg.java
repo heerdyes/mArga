@@ -76,10 +76,22 @@ public class edg extends JFrame implements DocumentListener, KeyListener
     pack();
   }
   
+  private String getcfgpath()
+  {
+    String usrhome = System.getenv("HOME");
+    String[] dirs = new String[]
+    {
+      System.getenv("HOME"),
+      ".mArga.d", "edg", "java", "na", "edg.cfg"
+    };
+    String cfgpath = String.join(File.separator, dirs);
+    return cfgpath;
+  }
+  
   // call loadcfg before init
   private void loadcfg()
   {
-    try(BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("edg.cfg"))))
+    try(BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(getcfgpath()))))
     {
       String ln = br.readLine();
       while(ln != null)
