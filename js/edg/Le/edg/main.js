@@ -1,5 +1,6 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('node:path')
+const fs = require('fs')
 
 const createWindow = () => {
   const win = new BrowserWindow({
@@ -13,14 +14,22 @@ const createWindow = () => {
   win.loadFile('index.html')
 }
 
+const rdfl = (fname) => {
+  try {
+    console.log(fname)
+    const data = fs.readFileSync(fname, 'utf8')
+    console.log(data)
+    return data
+  } catch (err) {
+    console.error(err)
+  }
+  return null
+}
+
 app.whenReady().then(() => {
   ipcMain.handle('ping', () => 'pong')
-  ipcMain.handle('greet', () => {
-    let s = '';
-    for(let i = 0; i < 10; i++) {
-      s += i;
-    }
-    return s;
+  ipcMain.handle('loadfile', (e, fname) => {
+    return rdfl(fname)
   })
 
   createWindow()
