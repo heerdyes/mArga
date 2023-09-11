@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'"
+    />
+    <meta
+      http-equiv="X-Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'"
+    />
+    <title>edg</title>
+  </head>
+  <body>
+    <h3>edg</h3>
+    <table>
+      <tr>
+        <td>
+          <label>filename:</label>
+          <input id="filename" placeholder="filename" value=""></input>
+        </td>
+      </tr>
+      <tr>
+        <td><textarea rows=20 cols=64 id="info"></textarea></td>
+      </tr>
+      <tr>
+        <td><button id="bfileloader">loadfile</button></td>
+      </tr>
+    </table>
+  </body>
+  <script src="./renderer.js"></script>
+</html>
