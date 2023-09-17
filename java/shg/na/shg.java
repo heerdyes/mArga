@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.util.*;
 
 public class shg extends Frame implements WindowListener, KeyListener {
   TextArea ta;
@@ -46,7 +47,7 @@ public class shg extends Frame implements WindowListener, KeyListener {
 
   shg(String t) {
     super(t);
-    setSize(600, 400);
+    setSize(900, 600);
     z = new sh();
     addWindowListener(this);
     setstyle();
@@ -104,9 +105,11 @@ public class shg extends Frame implements WindowListener, KeyListener {
 
 class sh {
   File pwd;
+  HashMap<String, File> pathtable;
 
   sh() {
     pwd = new File(".");
+    pathtable = new HashMap<>();
   }
 
   String docd(String d) {
@@ -143,12 +146,67 @@ class sh {
 
   String dohelp() {
     return String.join("\n", new String[] {
-      "pwd  -> working dir",
-      "ls   -> list dirs",
-      "cd   -> change dir",
-      "c    -> cat",
-      "help -> this help"
+      "pwd                 -> working dir",
+      "ls                  -> list dirs",
+      "cd                  -> change dir",
+      "c                   -> cat",
+      "mkpath <name> <dir> -> add to path table",
+      "lspath              -> list pathtable",
+      "help                -> this help"
     });
+  }
+
+  String domkpath(String pk, String p) {
+    if(pk.equals("") || p.equals("")) {
+      return "E: path key or path is empty";
+    }
+    String fpath = pwd.getAbsolutePath() + File.separator + p;
+    if(p.startsWith("/")) {
+      fpath = p;
+    }
+    File _pf = new File(fpath);
+    if(_pf.exists() && _pf.isDirectory()) {
+      pathtable.put(pk, _pf);
+      return "";
+    }
+    return "path either nonexistent or nondirectory!";
+  }
+
+  String dolspath() {
+    StringBuffer sb = new StringBuffer();
+    for(String k : pathtable.keySet()) {
+      sb.append(String.format("%s -> %s\n", k, pathtable.get(k)));
+    }
+    return sb.toString();
+  }
+
+  File getprogfile(String pfile) {
+    File xprog = null;
+    for(Map.Entry<String, File> kv : pathtable.entrySet()) {
+      File fp = kv.getValue();
+      File fxp = new File(fp.getAbsolutePath() + File.separator + pfile);
+      if(fxp.exists() && fxp.isFile()) {
+        xprog = fxp;
+        break;
+      }
+    }
+    return xprog;
+  }
+
+  String dorunextprog(String pfile, String pargs) {
+    File xprog = getprogfile(pfile);
+    if(xprog == null) {
+      return String.format("unknown command or file: %s", pfile);
+    }
+    ProcessBuilder pb = new ProcessBuilder(xprog.getAbsolutePath(), pargs);
+    pb.directory(pwd);
+    try {
+      outputrcvr pout = new outputrcvr(pb.start());
+      return pout.collectoutput();
+    } catch (IOException ioe) {
+      ioe.printStackTrace();
+      return ioe.getMessage();
+    }
   }
 
   String clexec(String cli) {
@@ -168,8 +226,83 @@ class sh {
       return docat(u.cadr(cmdargv[1])[0]);
     } else if(cmd.equals("help")) {
       return dohelp();
+    } else if(cmd.equals("mkpath")) {
+      String[] p = u.cadr(cmdargv[1]);
+      return domkpath(p[0], p[1]);
+    } else if(cmd.equals("lspath")) {
+      return dolspath();
+    } else {
+      return dorunextprog(cmd, cmdargv[1]);
     }
-    return "unknown command: " + cmd;
+  }
+}
+
+class outputrcvr {
+  Process p;
+  tail out, err;
+  String outbuf, errbuf;
+
+  outputrcvr(Process _p) {
+    p = _p;
+    out = new tail(p.getInputStream());
+    err = new tail(p.getErrorStream());
+  }
+
+  String collectoutput() {
+    int exitcode = 0;
+    try {
+      out.start();
+      err.start();
+      exitcode = p.waitFor();
+      out.join();
+      err.join();
+      outbuf = out.getdst();
+      errbuf = err.getdst();
+    } catch (InterruptedException ie) {
+      ie.printStackTrace();
+    }
+    return outbuf + errbuf;
+  }
+}
+
+class tail extends Thread {
+  InputStreamReader isr;
+  StringBuffer dst;
+
+  tail(InputStream is) {
+    isr = new InputStreamReader(is);
+    dst = new StringBuffer();
+  }
+
+  String getdst() { return dst.toString(); }
+
+  void consumechars() {
+    try {
+      int x = isr.read();
+      while(x != -1) {
+        char c = (char) x;
+        dst.append(c);
+        x = isr.read();
+      }
+    } catch (IOException ioe) {
+      ioe.printStackTrace();
+    }
+  }
+
+  void consumelines() {
+    try(BufferedReader br = new BufferedReader(isr)) {
+      String s = br.readLine();
+      while(s != null) {
+        dst.append(s + "\n");
+        s = br.readLine();
+      }
+    } catch (IOException ioe) {
+      ioe.printStackTrace();
+    }
+  }
+
+  public void run() {
+    consumechars();
   }
 }
 
