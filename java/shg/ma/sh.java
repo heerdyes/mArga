@@ -1,6 +1,6 @@
 import java.io.*;
 
-public class sh {
+public class sh implements Runnable {
   InputStreamReader rd;
   OutputStreamWriter wr;
   volatile boolean hangup;
@@ -69,5 +69,9 @@ public class sh {
     } catch (IOException ioe) {
       ioe.printStackTrace();
     }
+  }
+
+  public void run() {
+    repl();
   }
 }

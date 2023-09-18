@@ -18,7 +18,7 @@ public class shg extends JFrame implements KeyListener {
       PipedOutputStream pipe2out = new PipedOutputStream(pipe2in);
 
       // init shell and term
-      tx = new tash(10, 50, 620, 410, pipe1in, pipe2out);
+      tx = new tash(2, 37, 635, 440, pipe1in, pipe2out);
       z = new sh(pipe2in, pipe1out);
 
       // usual gui stuff
@@ -28,11 +28,7 @@ public class shg extends JFrame implements KeyListener {
       setVisible(true);
 
       // launch shell on a separate thread
-      new Thread() {
-        public void run() {
-          z.repl();
-        }
-      }.start();
+      new Thread(z).start();
     } catch (IOException ioe) {
       ioe.printStackTrace();
     }

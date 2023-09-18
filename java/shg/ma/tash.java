@@ -37,7 +37,7 @@ public class tash {
     transcript = new ArrayList<>();
     transcript.add(new StringBuffer());
     maxcols = ww / ((int)fsz - 4);
-    maxrows = hh / ((int)fsz + 10);
+    maxrows = hh / ((int)fsz + 5);
     System.out.printf("maxcols: %d, maxrows: %d\n", maxcols, maxrows);
     setupfont("OCRA");
     setio(in, out);
@@ -52,9 +52,10 @@ public class tash {
     g.setColor(bg);
     g.fillRect(x, y, w, h);
     g.setColor(fg);
+    g.drawRect(x, y, w, h);
     g.setFont(fnt);
     int cx = x + 6;
-    int cy = y + 26;
+    int cy = y + 16;
     for(StringBuffer sb : transcript) {
       g.drawString(sb.toString(), cx, cy);
       cy += 20;
@@ -73,6 +74,9 @@ public class tash {
     while(x != 10) {
       dst.append((char)x);
       x = is.read();
+    }
+    while(dst.length() >= maxcols) {
+      dst.deleteCharAt(0);
     }
   }
 
