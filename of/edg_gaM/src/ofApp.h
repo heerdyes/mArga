@@ -4,6 +4,8 @@
 
 #define WW ofGetWidth()
 #define HH ofGetHeight()
+#define NR 20
+#define NC 80
 
 class ofApp : public ofBaseApp{
 
@@ -28,5 +30,7 @@ class ofApp : public ofBaseApp{
 		
 		ofFbo fb;
 		int fbw,fbh;
+		string buf[NR];
+		int r,c;
 };
 
