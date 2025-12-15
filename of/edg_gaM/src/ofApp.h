@@ -132,6 +132,32 @@ public:
         }
     }
     
+    void delr()
+    {
+        if(mh==nullptr) return;
+        if(mh==hd && mh==tl) mh=hd=tl=nullptr;
+        if(mh==hd)
+        {
+            mh=hd->n;
+            hd->n=mh->p=nullptr;
+            hd=mh;
+        }
+        else if(mh==tl)
+        {
+            mh=tl->p;
+            mh->n=tl->p=nullptr;
+            tl=mh;
+        }
+        else
+        {
+            mh->p->n=mh->n;
+            mh->n->p=mh->p;
+            cnode *tmp=mh->n;
+            mh->n=mh->p=nullptr;
+            mh=tmp;
+        }
+    }
+    
     // debug purposes
     void dump()
     {

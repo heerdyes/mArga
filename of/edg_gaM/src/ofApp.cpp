@@ -87,6 +87,10 @@ void ofApp::keyPressed(int key)
     {
         buf.mhu();
     }
+    else if(key==127) // del
+    {
+        buf.delr();
+    }
     else if(key==13) // NL is special as always
     {
         buf.insr('\n');
