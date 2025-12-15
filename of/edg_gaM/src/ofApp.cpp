@@ -8,25 +8,53 @@ void ofApp::setup()
     fbw=800;
     fbh=450;
     fb.allocate(fbw,fbh, GL_RGBA);
-    
-    r=c=0;
-    for(int i=0;i<NR;i++)
-        for(int j=0;j<NC;j++)
-            buf[i]+=" ";
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){}
 
+void ofApp::fbrndr()
+{
+    ofBackground(192);
+    ofSetColor(0);
+    
+    float xx=6,yy=18,ygap=16;
+    float curw=7;
+    int r=0;
+    
+    ofDrawBitmapStringHighlight(ofToString(r,2,'0'), xx,yy);
+    xx+=22;
+    
+    for(cnode *i=buf.hd;i!=nullptr;i=i->n)
+    {
+        // cursor
+        if(i==buf.mh)
+        {
+            float ycur=yy+3;
+            ofDrawLine(xx,ycur,xx+curw,ycur);
+        }
+        // char rndr
+        if(i->c=='\n')
+        {
+            xx=6;
+            yy+=ygap;
+            r++;
+            ofDrawBitmapStringHighlight(ofToString(r,2,'0'), xx,yy);
+            xx+=22;
+        }
+        else
+        {
+            ofDrawBitmapString(ofToString(i->c), xx,yy);
+            xx+=9;
+        }
+    }
+}
+
 //--------------------------------------------------------------
 void ofApp::draw()
 {
     fb.begin();
-        ofBackground(0);
-        ofSetColor(0,255,255);
-        
-        for(int i=0;i<NR;i++)
-            ofDrawBitmapString(buf[i], 5,i*10+18);
+    fbrndr();
     fb.end();
     fb.draw(0,0, WW,HH);
 }
@@ -37,15 +65,37 @@ void ofApp::exit(){}
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key)
 {
-    if(key==13)
+    cout<<key<<endl;
+    if(key==3680) return;
+    if(key==1) return;
+    if(key==3682) return;
+    if(key==2) return;
+    
+    if(key==57358) // -> arrow
     {
-        r=(r+1)%NR;
-        c=0;
+        buf.mhr();
+    }
+    else if(key==57356) // <- arrow
+    {
+        buf.mhl();
+    }
+    else if(key==57359) // v arrow
+    {
+        buf.mhd();
+    }
+    else if(key==57357) // ^ arrow
+    {
+        buf.mhu();
+    }
+    else if(key==13) // NL is special as always
+    {
+        buf.insr('\n');
+        buf.mhr();
     }
     else
     {
-        buf[r][c]=(char)key;
-        c=(c+1)%NC;
+        buf.insr((char)key);
+        buf.mhr();
     }
 }
 

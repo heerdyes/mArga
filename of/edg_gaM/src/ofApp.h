@@ -7,6 +7,142 @@
 #define NR 20
 #define NC 80
 
+class cnode
+{
+public:
+    char c;
+    cnode *p;
+    cnode *n;
+    
+    cnode(char cc)
+    {
+        c=cc;
+        p=nullptr;
+        n=nullptr;
+    }
+};
+
+class clist
+{
+public:
+    cnode *hd;
+    cnode *tl;
+    cnode *mh;
+    
+    clist()
+    {
+        hd=tl=mh=nullptr;
+    }
+    
+    bool mt() { return hd==nullptr || tl==nullptr || mh==nullptr; }
+    
+    void append(char c)
+    {
+        cnode *tmp=new cnode(c);
+        
+        if(hd==nullptr || tl==nullptr)
+        {
+            mh=hd=tl=tmp;
+        }
+        else
+        {
+            tmp->p=tl;
+            tl->n=tmp;
+            tl=tmp;
+        }
+    }
+    
+    void mhl()
+    {
+        if(mh==nullptr) return;
+        if(mh==hd) return;
+        mh=mh->p;
+    }
+    
+    void mhr()
+    {
+        if(mh==nullptr) return;
+        if(mh==tl) return;
+        mh=mh->n;
+    }
+    
+    void mhd()
+    {
+        if(mh==nullptr) return;
+        if(mh==tl) return;
+        while(mh->c!='\n' && mh!=tl) mh=mh->n;
+        mhr();
+    }
+    
+    void mhu()
+    {
+        if(mh==nullptr) return;
+        if(mh==hd) return;
+        while(mh->c!='\n' && mh!=hd) mh=mh->p;
+        mhl();
+    }
+    
+    void insl(char c)
+    {
+        cnode *tmp=new cnode(c);
+        if(mh==nullptr || hd==nullptr || tl==nullptr)
+        {
+            mh=hd=tl=tmp;
+        }
+        else
+        {
+            if(mh->p==nullptr) // means mh at hd
+            {
+                tmp->n=mh;
+                mh->p=tmp;
+                hd=tmp;
+            }
+            else
+            {
+                tmp->n=mh;
+                tmp->p=mh->p;
+                mh->p->n=tmp;
+                mh->p=tmp;
+            }
+        }
+    }
+    
+    void insr(char c)
+    {
+        cnode *tmp=new cnode(c);
+        if(mh==nullptr || hd==nullptr || tl==nullptr)
+        {
+            mh=hd=tl=tmp;
+        }
+        else
+        {
+            if(mh->n==nullptr) // means mh at tl
+            {
+                tmp->p=mh;
+                mh->n=tmp;
+                tl=tmp;
+            }
+            else
+            {
+                tmp->n=mh->n;
+                tmp->p=mh;
+                mh->n->p=tmp;
+                mh->n=tmp;
+            }
+        }
+    }
+    
+    // debug purposes
+    void dump()
+    {
+        if(hd!=nullptr)
+        {
+            for(cnode *i=hd;i!=nullptr;i=i->n)
+                cout<<i->c<<endl;
+        }
+    }
+};
+
 class ofApp : public ofBaseApp{
 
 	public:
@@ -28,9 +164,10 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo) override;
 		void gotMessage(ofMessage msg) override;
 		
+		void fbrndr();
+		
 		ofFbo fb;
 		int fbw,fbh;
-		string buf[NR];
-		int r,c;
+		clist buf;
 };
 
