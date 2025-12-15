@@ -8,6 +8,11 @@ void ofApp::setup()
     fbw=800;
     fbh=450;
     fb.allocate(fbw,fbh, GL_RGBA);
+    
+    curdir="/home/heerdyes/L/tmp";
+    tempf="ka";
+    stat="ready";
+    estate=0;
 }
 
 //--------------------------------------------------------------
@@ -48,6 +53,10 @@ void ofApp::fbrndr()
             xx+=9;
         }
     }
+    
+    // stats
+    string curch=buf.mh!=nullptr?ofToString((int)buf.mh->c,3,'0'):"<>";
+    ofDrawBitmapStringHighlight(stat+" | "+curch, 8,440);
 }
 
 //--------------------------------------------------------------
@@ -73,14 +82,17 @@ void ofApp::keyPressed(int key)
     
     if(key==57358) // -> arrow
     {
+        stat="->";
         buf.mhr();
     }
     else if(key==57356) // <- arrow
     {
+        stat="<-";
         buf.mhl();
     }
     else if(key==57359) // v arrow
     {
+        stat="v";
         buf.mhd();
     }
     else if(key==57357) // ^ arrow
@@ -89,7 +101,33 @@ void ofApp::keyPressed(int key)
     }
     else if(key==127) // del
     {
+        stat="del";
         buf.delr();
+    }
+    else if(key==57362) // home
+    {
+        stat="home";
+        buf.mhhome();
+    }
+    else if(key==57363) // end
+    {
+        stat="end";
+        buf.mhend();
+    }
+    else if(key==57345) // F2
+    {
+        stat="wf:"+curdir+"/"+tempf;
+        buf.fdump(curdir+"/"+tempf);
+    }
+    else if(key==57346) // F3
+    {
+        stat="rf:"+curdir+"/"+tempf;
+        buf.fload(curdir+"/"+tempf);
+    }
+    else if(key==8) // bksp
+    {
+        stat="^H";
+        buf.bksp();
     }
     else if(key==13) // NL is special as always
     {
@@ -107,7 +145,7 @@ void ofApp::keyPressed(int key)
 void ofApp::keyReleased(int key){}
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){}
+void ofApp::mouseMoved(int x, int y){}
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){}

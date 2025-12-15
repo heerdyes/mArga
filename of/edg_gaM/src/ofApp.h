@@ -66,19 +66,50 @@ public:
         mh=mh->n;
     }
     
-    void mhd()
+    void mhlx(char x)
+    {
+        if(mh==nullptr) return;
+        if(mh==hd) return;
+        while(mh->c!=x && mh!=hd) mh=mh->p;
+    }
+    
+    void mhrx(char x)
     {
         if(mh==nullptr) return;
         if(mh==tl) return;
-        while(mh->c!='\n' && mh!=tl) mh=mh->n;
+        while(mh->c!=x && mh!=tl) mh=mh->n;
+    }
+    
+    void mhd()
+    {
+        mhrx('\n');
         mhr();
     }
     
     void mhu()
     {
+        mhlx('\n');
+        mhl();
+    }
+    
+    void mhhome()
+    {
+        mhlx('\n');
+        if(mh!=hd)
+        {
+            mhr();
+        }
+    }
+    
+    void mhend()
+    {
+        mhrx('\n');
+    }
+    
+    void bksp()
+    {
         if(mh==nullptr) return;
-        if(mh==hd) return;
-        while(mh->c!='\n' && mh!=hd) mh=mh->p;
+        mh->c=' ';
         mhl();
     }
     
@@ -158,7 +189,7 @@ public:
         }
     }
     
-    // debug purposes
+    // i/o
     void dump()
     {
         if(hd!=nullptr)
@@ -166,6 +197,24 @@ public:
             for(cnode *i=hd;i!=nullptr;i=i->n)
                 cout<<i->c<<endl;
         }
+    }
+    
+    void fdump(string ffn)
+    {
+        if(hd!=nullptr)
+        {
+            std::ofstream fout(ffn);
+            for(cnode *i=hd;i!=nullptr;i=i->n) fout<<i->c;
+            fout.close();
+        }
+    }
+    
+    void fload(string ffn)
+    {
+        std::ifstream fin(ffn);
+        char ch;
+        while(fin>>std::noskipws>>ch) append(ch);
+        fin.close();
     }
 };
 
@@ -195,5 +244,10 @@ class ofApp : public ofBaseApp{
 		ofFbo fb;
 		int fbw,fbh;
 		clist buf;
+		
+		string curdir;
+		string tempf;
+		string stat;
+		int estate;
 };
 
